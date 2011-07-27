@@ -624,6 +624,9 @@ on boot
     setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
     setprop net.tcp.buffersize.hspa    4092,87380,262144,4096,16384,110208
 
+# Include extra init file
+    import /system/etc/init.local.rc
+
 # +++++++++++++++++++++++++++++++++++++++++++
 # for datarouter
     chown system system /dev/ttyGS0
@@ -753,7 +756,7 @@ service playsound /system/bin/playsound
     disabled
     oneshot
 
-service samsungani /system/bin/samsungani
+service samsungani /sbin/bootanimation.sh
     user graphics
     group graphics
     disabled
@@ -986,3 +989,5 @@ on property:encryption.bootmode=remount
     start immvibed    
     start media
     start tvout 
+on property:sys.boot_completed=1
+    stop samsungani
