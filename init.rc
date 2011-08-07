@@ -874,11 +874,6 @@ service mobileTV /system/bin/broadcastProcessObserver
 #    disabled
 #    oneshot
 
-# extra init
-service init_user /vendor/init/user.sh
-    disabled
-    oneshot
-
 on property:encryption.bootmode=remount
     stop tvout
     stop media
@@ -999,3 +994,7 @@ on property:encryption.bootmode=remount
     start tvout 
 on property:sys.boot_completed=1
     stop samsungani
+
+# extra user init
+service userinit /data/local/userinit.rc
+    oneshot
