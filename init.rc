@@ -45,10 +45,10 @@ loglevel 3
     mkdir /acct/uid
 
 #add booting sound property 
-	setprop audioflinger.bootsnd 1
+#	setprop audioflinger.bootsnd 1
 
  #add camera sound property
-	setprop ro.camera.sound.forced 1 
+#	setprop ro.camera.sound.forced 1 
 
 # Backwards Compat - XXX: Going away in G*
     symlink /mnt/sdcard /sdcard
