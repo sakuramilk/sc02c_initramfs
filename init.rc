@@ -618,19 +618,6 @@ service console /system/bin/sh
 on property:ro.secure=0
     start console
 
-# Samsung USB Mode : system properties are linked with sysfs
-# write /sys/class/sec/switch/UsbMenuSel 0
-on property:persist.service.usb.setting=0
-	write /sys/devices/platform/android_usb/UsbMenuSel 0
-on property:persist.service.usb.setting=1
-	write /sys/devices/platform/android_usb/UsbMenuSel 1
-on property:persist.service.usb.setting=2
-	write /sys/devices/platform/android_usb/UsbMenuSel 2
-on property:persist.service.usb.setting=3
-	write /sys/devices/platform/android_usb/UsbMenuSel 3
-on property:persist.service.usb.setting=4
-	write /sys/devices/platform/android_usb/UsbMenuSel 4
-
 # adbd is controlled by the persist.service.adb.enable system property
 service adbd /sbin/adbd
     disabled
