@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
-SRC_PATH=/vendor/bln/lights.SC-02C.so
-DST_PATH=/system/lib/hw/lights.SC-02C.so
+SRC_PATH=/vendor/bln/lights.smdkv310.so
+DST_PATH=/system/lib/hw/lights.smdkv310.so
 
 if [ ! -e $DST_PATH.orig ]; then
   mount -o remount,rw /system /system

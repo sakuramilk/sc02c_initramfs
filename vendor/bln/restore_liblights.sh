@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-SRC_PATH=/system/lib/hw/lights.SC-02C.so
+SRC_PATH=/system/lib/hw/lights.smdkv310.so
 
 if [ -e $SRC_PATH.orig ]; then
   mount -o remount,rw /system /system
