@@ -32,6 +32,9 @@ on early-fs
     insmod /lib/modules/rfs_glue.ko
     insmod /lib/modules/rfs_fat.ko
 
+	# logcat -kodos
+	insmod /lib/modules/logger.ko
+
     # parameter block
     mkdir /mnt/.lfs 0755 root root
     insmod /lib/modules/j4fs.ko
