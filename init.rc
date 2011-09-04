@@ -995,9 +995,11 @@ on property:encryption.bootmode=remount
 on property:sys.boot_completed=1
     stop samsungani
 
-service post-init /sbin/post-init.sh
-    user root
-    oneshot
+#service post-init /sbin/post-init.sh
+#    user root
+#    oneshot
+on property:conf.androidLogger=1
+	insmod /lib/modules/logger.ko
 
 # extra user init
 service userinit /data/local/userinit.rc
