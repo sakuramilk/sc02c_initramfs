@@ -745,3 +745,13 @@ service tvout /system/bin/tvoutserver
      user system
      group graphics
 
+on property:conf.androidLogger=1
+    insmod /lib/modules/logger.ko
+
+on property:conf.cifs=1
+    insmod /lib/modules/cifs.ko
+
+# extra user init
+service userinit /data/local/userinit.rc
+    user root
+    oneshot
