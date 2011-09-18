@@ -53,6 +53,7 @@
 /dev/msm_pcm_ctl*         0660   system     audio
 /dev/msm_snd*             0660   system     audio
 /dev/msm_mp3*             0660   system     audio
+/dev/msm_aac*             0660   system     audio
 /dev/audience_a1026*      0660   system     audio
 /dev/tpa2018d1*           0660   system     audio
 /dev/msm_audpre           0660   system     audio
@@ -63,7 +64,6 @@
 /dev/snd/dsp              0660   system     audio
 /dev/snd/dsp1             0660   system     audio
 /dev/snd/mixer            0660   system     audio
-/dev/fmradio              0660   system     audio
 /dev/smd0                 0640   radio      radio
 /dev/qemu_trace           0666   system     system
 /dev/qmi                  0640   radio      radio
@@ -76,7 +76,7 @@
 # CDMA radio interface MUX
 /dev/ts0710mux*           0640   radio      radio
 /dev/ppp                  0660   radio      vpn
-/dev/tun                  0660   vpn        vpn
+/dev/tun                  0640   vpn        vpn
 
 # sysfs properties
 /sys/devices/virtual/input/input*   enable      0660  root   input

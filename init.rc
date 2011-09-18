@@ -176,7 +176,7 @@ on post-fs
    
     # This may have been created by the recovery system with odd permissions
     chown system cache /cache/recovery
-    chmod 0775 /cache/recovery
+    chmod 0770 /cache/recovery
 
     #change permissions on vmallocinfo so we can grab it from bugreports
     chown root log /proc/vmallocinfo
@@ -605,10 +605,6 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-# readahead files which are used in "preloadClasses"
-service sreadaheadd /sbin/sreadaheadd
-    oneshot
-
 service console /system/bin/sh
     console
     disabled
@@ -644,6 +640,7 @@ service vold /system/bin/vold
 
 service netd /system/bin/netd
     socket netd stream 0660 root system
+    socket dnsproxyd stream 0660 root inet
 
 service debuggerd /system/bin/debuggerd
 
