@@ -11,6 +11,7 @@ on init
     symlink /system/etc /etc
 
     mkdir /sdcard
+    mkdir /sdcard1
     mkdir /preload
     mkdir /system
     mkdir /system2
@@ -34,17 +35,12 @@ on early-fs
     # parameter block
     mkdir /mnt/.lfs 0755 root root
 
-on emmc-fs
-    mount tmpfs tmpfs /tmp mode=0755
-    mount ext4 /dev/block/mmcblk0p24 /system wait
-
 on fs
     mount tmpfs tmpfs /tmp mode=0755    
     mount ext4 /dev/block/mmcblk0p9 /system wait
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs
-    #mount rfs /dev/block/mmcblk0p1 /efs nosuid nodev check=no
     mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
     chown radio system /efs
     chmod 0771 /efs

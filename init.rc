@@ -379,8 +379,8 @@ on post-fs
 #-----------------------------------------------------------------------
 
 #ISDBT
-    chmod 0666 /dev/isdbt
-    chmod 0666 /dev/s3c-tsi
+    chmod 0660 /dev/isdbt
+    chmod 0660 /dev/s3c-tsi
     chown system system /dev/isdbt
     chown system system /dev/s3c-tsi
 
