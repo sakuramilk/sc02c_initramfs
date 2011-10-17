@@ -110,6 +110,9 @@ loglevel 3
 # ko files for FM Radio
     insmod /lib/modules/Si4709_driver.ko
 
+# ko files for NTFS
+    insmod /lib/modules/ntfs.ko
+
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
