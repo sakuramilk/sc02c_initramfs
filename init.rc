@@ -121,8 +121,8 @@ loglevel 3
 # ko files for bthid
     insmod /lib/modules/bthid.ko
 
-# ko files for NTFS
-    insmod /lib/modules/ntfs.ko
+# ko files for FM Radio
+#   insmod /lib/modules/Si4709_driver.ko
 
 on fs
     # mount mtd partitions
@@ -1002,6 +1002,9 @@ on property:conf.androidLogger=1
 
 on property:conf.cifs=1
     insmod /lib/modules/cifs.ko
+
+on property:conf.ntfs=1
+    insmod /lib/modules/ntfs.ko
 
 # extra user init
 service userinit /data/local/userinit.rc
