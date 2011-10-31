@@ -116,7 +116,7 @@ loglevel 3
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount ext4 /dev/block/mmcblk0p9 /system wait rw
+    mount ext4 /dev/block/mmcblk0p9 /system wait ro
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     exec check_filesystem /dev/block/mmcblk0p10 ext4
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc
@@ -402,7 +402,15 @@ on boot
     # Tweak background writeout
     write /proc/sys/vm/dirty_expire_centisecs 200
     write /proc/sys/vm/dirty_background_ratio  5
+
+# mDNIe
+    chown radio system /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
     write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 0
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd 1
 
 # permissions for NFC
     setprop ro.nfc.port "I2C"
@@ -431,10 +439,6 @@ on boot
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/acl_set 
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_table 
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_mode 
-	chown radio system /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/enable_disable 
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/brightness
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/touch_update
@@ -493,10 +497,6 @@ on boot
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vfocv
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_soc
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vol
-	chown radio radio  /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd 
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd 
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 
 	chown radio system /sys/devices/platform/s5p-ehci/ehci_power
 	chown radio system /sys/devices/virtual/net/svnet0/waketime
 
@@ -598,11 +598,6 @@ on boot
 
     class_start default
 
-# Sensor
-    chmod 666 /dev/accelerometer
-    chmod 666 /dev/akm8975
-    chmod 666 /dev/tspdrv
-
 ## Daemon processes to be run by init.
 ##
 service ueventd /sbin/ueventd
@@ -691,7 +686,7 @@ service dbus /system/bin/dbus-daemon --system --nofork
     group bluetooth net_bt_admin
 
 #service hciattach /system/bin/hciattach /dev/s3c2410_serial0 any
-service hciattach /system/bin/brcm_patchram_plus --enable_hci --baudrate 3000000 --patchram /system/bin/BCM4330B1_002.001.003.0221.0265.hcd /dev/s3c2410_serial0
+service hciattach /system/bin/logwrapper /system/bin/brcm_patchram_plus -d --enable_lpm --enable_hci --baudrate 3000000 --patchram /system/bin/BCM4330B1_002.001.003.0221.0265.hcd /dev/s3c2410_serial0
     user bluetooth
     group bluetooth net_bt_admin
     disabled
