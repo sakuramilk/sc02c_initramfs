@@ -37,6 +37,8 @@ on early-fs
     insmod /lib/modules/j4fs.ko
     mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
 
+	# logger
+	insmod /lib/modules/logger.ko
 
 on fs
     mount tmpfs tmpfs /tmp mode=0755    
@@ -86,3 +88,8 @@ service recovery /sbin/recovery
 
 service adbd /sbin/adbd recovery
 
+on property:persist.service.adb.enable=1
+    start adbd
+
+on property:persist.service.adb.enable=0
+    start adbd
