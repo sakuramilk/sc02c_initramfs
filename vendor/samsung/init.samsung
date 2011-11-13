@@ -1,0 +1,13 @@
+#!/sbin/busybox sh
+export _PATH="$PATH"
+export PATH=/sbin
+
+busybox cp -a /vendor/samsung/init.rc /
+busybox cp -a /vendor/samsung/init.smdkc210.rc /
+busybox cp -a /vendor/samsung/init.smdkv310.rc /
+busybox cp -a /vendor/samsung/ueventd.rc /
+busybox cp -a /vendor/samsung/ueventd.smdkc210.rc /
+busybox cp -a /vendor/samsung/ueventd.smdkv310.rc /
+
+mv /_init /init
+exec /init
