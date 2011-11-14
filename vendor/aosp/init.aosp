@@ -2,11 +2,23 @@
 export _PATH="$PATH"
 export PATH=/sbin
 
-busybox cp -a /vendor/aosp/init.rc /
+if [ "$1" = 'secondary' ]; then
+  busybox cp -a /vendor/aosp/init.rc.1 /init.rc
+  busybox cp -a /vendor/aosp/recovery.rc.1 /recovery.rc
+  busybox mv /misc/recovery.fstab.1 /misc/recovery.fstab
+  busybox rm /misc/recovery.fstab.0
+else
+  busybox cp -a /vendor/aosp/init.rc.0 /init.rc
+  busybox cp -a /vendor/aosp/recovery.rc.0 /recovery.rc
+  busybox mv /misc/recovery.fstab.0 /misc/recovery.fstab
+  busybox rm /misc/recovery.fstab.1
+fi
+
 busybox cp -a /vendor/aosp/init.smdkc210.rc /
 busybox cp -a /vendor/aosp/init.smdkv310.rc /
 busybox cp -a /vendor/aosp/ueventd.rc /
 busybox cp -a /vendor/aosp/ueventd.smdkv310.rc /
+
 
 mv /_init /init
 exec /init
