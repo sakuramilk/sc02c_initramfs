@@ -44,7 +44,7 @@ loglevel 3
     symlink /mnt/sdcard /sdcard
 
     mkdir /system
-    mkdir /xdata 0771 system system
+    mkdir /xdata 0775 system system
     mkdir /cache 0771 system cache
     mkdir /config 0500 root root
 
@@ -120,7 +120,7 @@ on fs
 
     # create symbolic link for primary boot rom data dir
     chown system system /xdata
-    chmod 0771 /xdata
+    chmod 0775 /xdata
     symlink /xdata/data0 /data
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system

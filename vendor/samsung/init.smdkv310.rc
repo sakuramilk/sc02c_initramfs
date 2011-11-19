@@ -1,8 +1,8 @@
 on boot
 #    setprop net.eth0.dns1 10.32.192.11
 #    setprop net.eth0.dns2 10.32.193.11
-    setprop ro.build.product smdkc210
-    setprop ro.product.device smdkc210
+    setprop ro.build.product smdkv310
+    setprop ro.product.device smdkv310
     setprop ro.radio.noril yes
 
 # fake some battery state

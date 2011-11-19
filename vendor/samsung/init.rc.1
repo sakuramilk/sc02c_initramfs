@@ -55,7 +55,7 @@ loglevel 3
 
     mkdir /system
     mkdir /dbdata 0771 system system
-    mkdir /xdata 0771 system system
+    mkdir /xdata 0775 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 
@@ -167,7 +167,7 @@ on post-fs
     # create symbolic link for primary boot rom data dir
 
     chown system system /xdata
-    chmod 0771 /xdata
+    chmod 0775 /xdata
     symlink /xdata/data1 /data
 
     mkdir /data/dbdata
