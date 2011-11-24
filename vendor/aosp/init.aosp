@@ -2,16 +2,21 @@
 export _PATH="$PATH"
 export PATH=/sbin
 
+busybox mount -t proc proc /proc
+busybox mount -t sysfs sysfs /sys
+echo 1 > /proc/sys/kernel/aosp_rom_mode
+echo 1 > /sys/devices/virtual/misc/bt_lpm/bt_mode
+
 if [ "$1" = 'secondary' ]; then
   busybox cp -a /vendor/aosp/init.rc.1 /init.rc
-  busybox cp -a /vendor/aosp/recovery.rc.1 /recovery.rc
-  busybox mv /misc/recovery.fstab.1 /misc/recovery.fstab
-  busybox rm /misc/recovery.fstab.0
+  #busybox cp -a /vendor/aosp/recovery.rc.1 /recovery.rc
+  #busybox mv /misc/recovery.fstab.1 /misc/recovery.fstab
+  #busybox rm /misc/recovery.fstab.0
 else
   busybox cp -a /vendor/aosp/init.rc.0 /init.rc
-  busybox cp -a /vendor/aosp/recovery.rc.0 /recovery.rc
-  busybox mv /misc/recovery.fstab.0 /misc/recovery.fstab
-  busybox rm /misc/recovery.fstab.1
+  #busybox cp -a /vendor/aosp/recovery.rc.0 /recovery.rc
+  #busybox mv /misc/recovery.fstab.0 /misc/recovery.fstab
+  #busybox rm /misc/recovery.fstab.1
 fi
 
 busybox cp -a /vendor/aosp/init.smdkc210.rc /
@@ -20,6 +25,8 @@ busybox cp -a /vendor/aosp/ueventd.rc /
 busybox cp -a /vendor/aosp/ueventd.smdkc210.rc /
 busybox cp -a /vendor/aosp/ueventd.smdkv310.rc /
 
+busybox umount /sys
+busybox umount /proc
 
 mv /_init /init
 exec /init
