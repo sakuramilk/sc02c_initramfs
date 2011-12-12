@@ -4,14 +4,8 @@ export PATH=/sbin
 
 if [ "$1" = 'secondary' ]; then
   busybox cp -a /vendor/samsung/init.rc.1 /init.rc
-  #busybox cp -a /vendor/samsung/recovery.rc.1 /recovery.rc
-  #busybox mv /misc/recovery.fstab.1 /misc/recovery.fstab
-  #busybox rm /misc/recovery.fstab.0
 else
   busybox cp -a /vendor/samsung/init.rc.0 /init.rc
-  #busybox cp -a /vendor/samsung/recovery.rc.0 /recovery.rc
-  #busybox mv /misc/recovery.fstab.0 /misc/recovery.fstab
-  #busybox rm /misc/recovery.fstab.1
 fi
 
 busybox cp -a /vendor/samsung/init.smdkc210.rc /

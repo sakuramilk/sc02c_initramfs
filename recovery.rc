@@ -2,15 +2,21 @@ on early-init
     start ueventd
 
 on init
-    export PATH /sbin:/vendor/su:/vendor/bin:/system0/sbin:/system0/bin:/system1/sbin:/system1/bin:/system/xbin
+    export PATH /sbin:/vendor/su:/vendor/bin:/system0/bin:/system0/xbin:/system1/bin:/system1/xbin
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_ROOT /system0
     export ANDROID_ROOT1 /system1
     export ANDROID_DATA /xdata
     export EXTERNAL_STORAGE /sdcard
+    export PHONE_STORAGE /emmc
 
     # for clockworkmod
     symlink /misc /etc
+
+    # override device prop
+    setprop ro.product.device galaxys2
+    setprop ro.build.product galaxys2
+    setprop ro.product.board galaxys2
 
 # create mountpoints
     mkdir /sdcard 0000 system system
@@ -36,8 +42,8 @@ on early-fs
     insmod /lib/modules/rfs_glue.ko
     insmod /lib/modules/rfs_fat.ko
 
-	# logcat -kodos
-	insmod /lib/modules/logger.ko
+    # logcat driver
+    insmod /lib/modules/logger.ko
 
     # parameter block
     mkdir /mnt/.lfs 0755 root root
@@ -61,10 +67,6 @@ on fs
     exec apply_system_policy /dev/block/mmcblk0p11 vfat
 
 on post-fs
-
-    #temp
-    chmod 750 /sbin/fat.format
-
     write /proc/sys/kernel/panic_on_oops 1
     write /proc/sys/kernel/hung_task_timeout_secs 0
     write /proc/cpu/alignment 4

@@ -3,28 +3,25 @@
 # dummy blocks extract
 /sbin/busybox tar xvf /res/misc/dev.tar
 
-# check boot rom
+# check boot partition
 /sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
 if [ "`/sbin/busybox grep secondary /xdata/boot.conf`" ]; then
-  /sbin/busybox umount /xdata
-  # secondary rom boot
-  /sbin/busybox mount -t ext4 /dev/block/mmcblk0p12 /system
-  if [ "`/sbin/busybox grep se.infra /system/build.prop`" ]; then
-    /sbin/busybox umount /system
-    exec /vendor/samsung/init.samsung secondary
-  else
-    /sbin/busybox umount /system
-    exec /vendor/aosp/init.aosp secondary
-  fi
+  BOOT_PARTITION=mmcblk0p12
+  BOOT_ROM=secondary
 else
-  /sbin/busybox umount /xdata
-  /sbin/busybox mount -t ext4 /dev/block/mmcblk0p9 /system
-  # primary rom boot
-  if [ "`/sbin/busybox grep se.infra /system/build.prop`" ]; then
-    /sbin/busybox umount /system
-    exec /vendor/samsung/init.samsung primary
-  else
-    /sbin/busybox umount /system
-    exec /vendor/aosp/init.aosp primary
-  fi
+  BOOT_PARTITION=mmcblk0p9
+  BOOT_ROM=primary
 fi
+/sbin/busybox umount /xdata
+
+# check rom vendor
+/sbin/busybox mount -t ext4 /dev/block/$BOOT_PARTITION /system
+if [ "`/sbin/busybox grep se.infra /system/build.prop`" ]; then
+  ROM_VENDOR=samsung
+else
+  ROM_VENDOR=aosp
+fi
+/sbin/busybox umount /system
+
+# run vendor init script
+exec /vendor/$ROM_VENDOR/init.$ROM_VENDOR $BOOT_ROM
