@@ -1,2 +1,14 @@
-# samsung messed up at naming their board. we've fixed it.
-# use this fake file so that rommanager still recognizes our device correctly.
+on boot
+    setprop ro.build.product smdkv310
+    setprop ro.product.device smdkv310
+    setprop ro.radio.noril yes
+
+# fake some battery state
+    setprop status.battery.state Slow
+    setprop status.battery.level 5
+    setprop status.battery.level_raw  50
+    setprop status.battery.level_scale 9
+
+# wi-fi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
