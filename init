@@ -16,7 +16,7 @@ fi
 
 # check rom vendor
 /sbin/busybox mount -t ext4 /dev/block/$BOOT_PARTITION /system
-if [ "`/sbin/busybox grep se.infra /system/build.prop`" ]; then
+if [ -f /system/framework/twframework.jar ]; then
   ROM_VENDOR=samsung
 else
   ROM_VENDOR=aosp
