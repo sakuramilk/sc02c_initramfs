@@ -103,6 +103,9 @@ loglevel 3
     # 5.0 %
     write /dev/cpuctl/bg_non_interactive/cpu.shares 52
 
+# lp files for sakuractive
+    insmod /lib/modules/cpufreq_sakuractive.ko
+
 # ko files for vibrator
     insmod /lib/modules/vibrator.ko
 
