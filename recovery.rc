@@ -7,10 +7,11 @@ on init
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
 
-    #symlink /system/etc /etc
+    symlink /misc /etc
 
     mkdir /sdcard
-    mkdir /sdcard1
+    mkdir /emmc
+    mkdir /usbdisk
     mkdir /system
     mkdir /data
     mkdir /cache
@@ -20,10 +21,14 @@ on init
 on fs
     mount ext4 /dev/block/mmcblk0p9 /system
 
-    #mkdir /efs
-    #mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait
-
 on boot
+
+# Permissions for mDNIe
+    chown system media_rw /sys/class/mdnie/mdnie/mode
+    chown system media_rw /sys/class/mdnie/mdnie/outdoor
+    chown system media_rw /sys/class/mdnie/mdnie/scenario
+    
+    write /sys/class/mdnie/mdnie/scenario 4
 
     ifup lo
     hostname localhost
@@ -34,7 +39,7 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-service console /system/bin/sh
+service console /sbin/sh
     class core
     console
     disabled
