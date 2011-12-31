@@ -67,7 +67,7 @@ service playlpm /system/bin/playlpm
 service immvibed /system/bin/immvibed 
 	oneshot
 
-service lpmkey /system/bin/charging_mode
+service lpmkey /system/bin/lpmkey
     	user root
 
 # adbd is controlled by the persist.service.adb.enable system property

@@ -56,6 +56,11 @@ on early-fs
     mkdir /sdcard 0000 system system
     chown system system /sdcard
     chmod 0000 /sdcard
+    
+    mkdir /sdcard1 0000 system system
+    chown system system /sdcard1
+    chmod 0000 /sdcard1
+    
     mkdir /system
     mkdir /data 0771 system system
     chown system system /data
@@ -68,18 +73,24 @@ on early-fs
 
 on fs
     mount tmpfs tmpfs /tmp
-    //mount rfs /dev/block/stl9 /system check=no
+				
     mount ext4 /dev/block/mmcblk0p9 /system wait
     
-    #exec apply_system_policy /dev/block/mmcblk0p10 ext4
-    #exec apply_system_policy /dev/block/mmcblk0p11mmcblk0p11
-    
-    mkdir /data
+    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait
+    chown system system /data
+    chmod 0771 /data
+    mkdir /data/fota
+    chown system system /data/fota 
+    chmod 0777 /data/fota
  
 	  #mount rfs /dev/block/stl11 /cache nosuid nodev check=no
 	  mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     chown system cache /cache
     chmod 0770 /cache
+    mkdir /cache/fota
+    chown system system /cache/fota 
+    chmod 0777 /cache/fota
+    
     
     #mount rfs /dev/block/stl3 /efs nosuid nodev check=no
 
@@ -103,41 +114,10 @@ on boot
     hostname localhost
     domainname localdomain
 
-    #kj0225.park DeviceEncryption to Mount data partition with password encrypted
-    setprop devenc.pwdui.done 0    
-
     class_start default
     
 service ueventd /sbin/ueventd
     critical
     
-## Daemon processes to be run by init.
-##
-#service console /system/bin/sh
-#    console
-
-# adbd is controlled by the persist.service.adb.enable system property
-#service adbd /sbin/adbd
-#    disabled
-
-#on property:persist.service.adb.enable=1
-#    start adbd
-
-#on property:persist.service.adb.enable=0
-#    stop adbd
-
-service passcodemanager /system/bin/passcodemanager
-    oneshot
-
 service redbend_ua /sbin/redbend_ua all
-    disabled
-    oneshot
-
-on property:devenc.pwdui.done=1
-    #mount rfs /dev/block/mmcblk0p2 /data nosuid nodev check=no
-    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard
-    chown system system /data
-    chmod 0771 /data 
-    chmod 0777 /data/fota
-    #mount vfat /dev/block/mmcblk0p1 /sdcard
-    start redbend_ua
+	  oneshot
