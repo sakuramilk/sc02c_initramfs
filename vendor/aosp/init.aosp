@@ -1,0 +1,17 @@
+#!/sbin/busybox sh
+export _PATH="$PATH"
+export PATH=/sbin
+
+if [ "$1" = 'secondary' ]; then
+  busybox cp -a /vendor/aosp/init.rc.1 /init.rc
+else
+  busybox cp -a /vendor/aosp/init.rc.0 /init.rc
+fi
+
+busybox cp -a /vendor/aosp/init.smdk4210.rc /
+busybox cp -a /vendor/aosp/init.smdk4210.usb.rc /
+busybox cp -a /vendor/aosp/ueventd.rc /
+busybox cp -a /vendor/aosp/ueventd.smdk4210.rc /
+
+mv /_init /init
+exec /init
