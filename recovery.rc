@@ -2,9 +2,9 @@ on early-init
     start ueventd
 
 on init
-    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
-    export ANDROID_ROOT /system
-    export ANDROID_DATA /data
+    export PATH /sbin:/vendor/bin:/system0/sbin:/system0/bin:/system0/xbin:/system1/sbin:/system1/bin:/system1/xbin
+    export ANDROID_ROOT /system0
+    export ANDROID_DATA /xdata
     export EXTERNAL_STORAGE /sdcard
 
     symlink /misc /etc
@@ -13,7 +13,10 @@ on init
     mkdir /emmc
     mkdir /usbdisk
     mkdir /system
+    mkdir /system0
+    mkdir /system1
     mkdir /data
+    mkdir /xdata
     mkdir /cache
     mkdir /preload
     mount /tmp /tmp tmpfs
