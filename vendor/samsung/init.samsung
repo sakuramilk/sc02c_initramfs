@@ -1,0 +1,26 @@
+#!/sbin/busybox sh
+_PATH="$PATH"
+export PATH=/sbin
+
+
+if [ "$1" = 'tertiary' ]; then
+	busybox cp -a /vendor/samsung/init.rc.2 /init.rc
+else
+	if [ "$1" = 'secondary' ]; then
+		busybox cp -a /vendor/samsung/init.rc.1 /init.rc
+	else
+		busybox cp -a /vendor/samsung/init.rc.0 /init.rc
+	fi
+fi
+#busybox cp -a /vendor/samsung/init.rc.2 /init.rc
+
+busybox cp -a /vendor/samsung/init.smdkc210.rc /
+busybox cp -a /vendor/samsung/init.smdkv310.rc /
+busybox cp -a /vendor/samsung/ueventd.rc /
+busybox cp -a /vendor/samsung/ueventd.smdkc210.rc /
+busybox cp -a /vendor/samsung/ueventd.smdkv310.rc /
+
+busybox rm -fr /dev/* /misc/dev.tar
+export PATH="${_PATH}"
+mv /_init /init
+exec /init

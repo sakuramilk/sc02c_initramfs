@@ -1,75 +1,38 @@
 #!/sbin/busybox sh
 
-PATH=/sbin:$PATH
-MBS_LOG=/mbs_data/mbs.log
-MBS_CONF=/mbs_data/mbs.conf
-
-# extract block device files
+# extract block devices
 /sbin/busybox tar xvf /misc/dev.tar
 
-# mount master data partision
-mount -t ext4 /dev/block/mmcblk0p10 /mbs_data
+# check boot partition
+/sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
 
-BOOT_DATE=`date`
-echo "boot start : $BOOT_DATE" > $MBS_LOG
 
-# boot rom number
-ret=`grep mbs\.boot\.rom $MBS_CONF | cut -d'=' -f2`
-echo "mbs.boot.rom = $ROM_ID" >> $MBS_LOG
-if [ -e "$ret" ]; 
-  ROM_ID=0
+
+if [ "`/sbin/busybox grep tertiary /xdata/boot.conf`" ]; then
+	  BOOT_PARTITION=mmcblk1p2
+	  BOOT_ROM=tertiary
 else
-  ROM_ID=$ret
+	if [ "`/sbin/busybox grep secondary /xdata/boot.conf`" ]; then
+	  BOOT_PARTITION=mmcblk0p12
+	  BOOT_ROM=secondary
+	else
+	  BOOT_PARTITION=mmcblk0p9
+	  BOOT_ROM=primary
+	fi
 fi
 
-# rom setting
-ROM_SYSTEM_PART=`grep mbs\.rom$ROM_ID\.system\.part $MBS_CONF | cut -d'=' -f2`
-ROM_SYSTEM_IMG=`grep mbs\.rom$ROM_ID\.system\.img $MBS_CONF | cut -d'=' -f2`
-ROM_SYSTEM_PATH=`grep mbs\.rom$ROM_ID\.system\.path $MBS_CONF | cut -d'=' -f2`
-ROM_DATA_PART=`grep mbs\.rom$ROM_ID\.data\.part $MBS_CONF | cut -d'=' -f2`
-ROM_DATA_IMG=`grep mbs\.rom$ROM_ID\.data\.img $MBS_CONF | cut -d'=' -f2`
-ROM_DATA_PATH=`grep mbs\.rom$ROM_ID\.data\.path $MBS_CONF | cut -d'=' -f2`
 
-echo "mbs.rom$ROM_ID.system.part = $ROM_SYSTEM_PART" >> $MBS_LOG
-echo "mbs.rom$ROM_ID.system.img = $ROM_SYSTEM_IMG" >> $MBS_LOG
-echo "mbs.rom$ROM_ID.system.path = $ROM_SYSTEM_PATH" >> $MBS_LOG
-echo "mbs.rom$ROM_ID.data.part = $ROM_DATA_PART" >> $MBS_LOG
-echo "mbs.rom$ROM_ID.data.img = $ROM_DATA_IMG" >> $MBS_LOG
-echo "mbs.rom$ROM_ID.data.path = $ROM_DATA_PATH" >> $MBS_LOG
 
-# check env
-if [ -z "$ROM_SYSTEM_PART" ]; then
-  # set default system partition
-  ROM_ID=0
-  ROM_SYSTEM_PART=/dev/block/mmcblk0p9
-  unset ROM_SYSTEM_PATH
-fi
-if [ -z "$ROM_DATA_PART" ]; then
-  # set default data path
-  unset ROM_DATA_PATH
-fi
+/sbin/busybox umount /xdata
 
 # check rom vendor
-mount -t ext4 $ROM_SYSTEM_PART /mbs_system
-if [ -f /mbs_system/framework/twframework.jar ]; then
+/sbin/busybox mount -t ext4 /dev/block/$BOOT_PARTITION /system
+if [ -f /system/framework/twframework.jar ]; then
   ROM_VENDOR=samsung
 else
   ROM_VENDOR=aosp
 fi
-
-echo "rom vendor = $ROM_VENDOR" >> $MBS_LOG
-
-umount /mbs_system
-umount /mbs_data
-
-# export env
-export MBS_ROM_ID=ROM_ID
-export MBS_ROM_SYSTEM_PART=$ROM_SYSTEM_PART
-export MBS_ROM_SYSTEM_IMG=$ROM_SYSTEM_IMG
-export MBS_ROM_SYSTEM_PATH=$ROM_SYSTEM_PATH
-export MBS_ROM_DATA_PART=$ROM_DATA_PART
-export MBS_ROM_DATA_IMG=$ROM_DATA_IMG
-export MBS_ROM_DATA_PATH=$ROM_DATA_PATH
+/sbin/busybox umount /system
 
 # run vendor init script
-exec /vendor/$ROM_VENDOR/init.vendor
+exec /vendor/$ROM_VENDOR/init.$ROM_VENDOR $BOOT_ROM
