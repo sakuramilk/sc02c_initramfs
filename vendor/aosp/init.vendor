@@ -1,0 +1,28 @@
+#!/sbin/busybox sh
+
+_PATH="$PATH"
+export PATH=/sbin
+
+# set aosp rom special init
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+echo 1 > /proc/sys/kernel/aosp_rom_mode
+echo 1 > /sys/devices/virtual/misc/bt_lpm/bt_mode
+umount /sys
+umount /proc
+
+# copy files
+cp -a /vendor/aosp/init.smdkc210.rc /
+cp -a /vendor/aosp/init.smdkv310.rc /
+cp -a /vendor/aosp/ueventd.rc /
+cp -a /vendor/aosp/ueventd.smdkc210.rc /
+cp -a /vendor/aosp/ueventd.smdkv310.rc /
+
+# make init.rc
+#cp -a /vendor/aosp/init.rc /init.rc
+
+# finish mbs init
+rm -fr /dev/* /misc/dev.tar
+export PATH="${_PATH}"
+mv /_init /init
+exec /init

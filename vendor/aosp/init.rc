@@ -118,15 +118,22 @@ loglevel 3
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount ext4 /dev/block/mmcblk0p9 /system wait ro
+    mount ext4 $MBS_ROM_SYSTEM_PART /mbs_system wait ro
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     exec check_filesystem /dev/block/mmcblk0p10 ext4
     mount ext4 /dev/block/mmcblk0p10 /xdata nosuid nodev noatime wait crypt discard,noauto_da_alloc
+    mount ext4 $MBS_ROM_DATA_PART /mbs_data nosuid nodev noatime wait crypt discard,noauto_da_alloc
 
-    # create symbolic link for primary boot rom data dir
-    chown system system /xdata
-    chmod 0775 /xdata
-    symlink /xdata/data0 /data
+    # create symbolic link for system directory
+    chown root root /mbs_system
+    chmod 0775 /mbs_system
+    symlink /mbs_system$MBS_ROM_SYSTEM_PATH /system
+
+    # create symbolic link for data directory
+    chown system system /mbs_data
+    chmod 0771 /mbs_data
+    symlink /mbs_data$MBS_ROM_DATA_PATH /xdata/data$MBS_ROM_ID
+    symlink /xdata/data$MBS_ROM_ID /data
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs
