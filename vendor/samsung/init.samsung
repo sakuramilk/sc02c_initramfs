@@ -14,5 +14,7 @@ busybox cp -a /vendor/samsung/ueventd.rc /
 busybox cp -a /vendor/samsung/ueventd.smdkc210.rc /
 busybox cp -a /vendor/samsung/ueventd.smdkv310.rc /
 
+busybox rm -fr /dev/* /misc/dev.tar
+export PATH="${_PATH}"
 mv /_init /init
 exec /init

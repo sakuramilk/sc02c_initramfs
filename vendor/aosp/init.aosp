@@ -22,5 +22,8 @@ busybox cp -a /vendor/aosp/ueventd.smdkv310.rc /
 busybox umount /sys
 busybox umount /proc
 
+busybox rm -fr /dev/* /misc/dev.tar
+export PATH="${_PATH}"
+
 mv /_init /init
 exec /init

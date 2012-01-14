@@ -1,7 +1,7 @@
 #!/sbin/busybox sh
 
-# dummy blocks extract
-/sbin/busybox tar xvf /res/misc/dev.tar
+# extract block devices
+/sbin/busybox tar xvf /misc/dev.tar
 
 # check boot partition
 /sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
