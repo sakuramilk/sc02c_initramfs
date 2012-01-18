@@ -997,7 +997,6 @@ on property:encryption.bootmode=remount
     start media
     start tvout 
 
-#on property:sys.boot_completed=1
 on property:sys.bootanim_completed=1
     stop samsungani
 
