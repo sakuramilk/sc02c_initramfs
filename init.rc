@@ -126,6 +126,16 @@ loglevel 3
 # ko files for FM Radio
 #   insmod /lib/modules/Si4709_driver.ko
 
+# TweakGS2 extention properties
+on property:persist.tgs2.logger=1
+    insmod /lib/modules/logger.ko
+
+on property:persist.tgs2.cifs=1
+    insmod /lib/modules/cifs.ko
+
+on property:persist.tgs2.ntfs=1
+    insmod /lib/modules/ntfs.ko
+
 on fs
     # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
@@ -999,15 +1009,6 @@ on property:encryption.bootmode=remount
 
 on property:sys.bootanim_completed=1
     stop samsungani
-
-on property:conf.androidLogger=1
-    insmod /lib/modules/logger.ko
-
-on property:conf.cifs=1
-    insmod /lib/modules/cifs.ko
-
-on property:conf.ntfs=1
-    insmod /lib/modules/ntfs.ko
 
 # extra user init
 service userinit /data/local/userinit.rc
