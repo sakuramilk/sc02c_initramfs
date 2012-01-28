@@ -1,0 +1,45 @@
+# video
+/dev/video14 0660 system system
+/dev/video21 0660 system system
+/dev/pmem_gpu1 0660 system graphics
+/dev/fimg2d 0666 system system
+/dev/mali 0666 system system
+/dev/ump 0666 system graphics
+/dev/s5p-jpeg 0660 system system
+/dev/s3c-mfc 0660 system graphics
+
+# camera
+/dev/video0 0660 system camera
+/dev/video1 0660 system camera
+/dev/video2 0660 system camera
+/dev/video3 0660 system camera
+
+# for usb printer
+/dev/usb/lp* 0660 system usb
+
+/dev/i2c-7 0660 system system
+/dev/i2c-15 0660 system system
+/dev/CEC 0660 system system
+/dev/HPD 0660 system system
+
+# for Sensor HAL
+/dev/akm8975 0660 system system
+/dev/accelerometer 0660 system system
+
+# for bluetooth
+/dev/s3c2410_serial0 0660 bluetooth bluetooth
+
+# for gps
+/dev/s3c2410_serial1 0660 root system
+/dev/tspdrv 0660 system system
+
+# for MTP
+/dev/usb_mtp_gadget 0660 system system
+
+# for ULP Audio
+/dev/s5p-rp 0660 system audio
+/dev/s5p-rp_ctrl 0660 system audio
+
+# for fmradio
+/dev/radio0 0777 system audio
+

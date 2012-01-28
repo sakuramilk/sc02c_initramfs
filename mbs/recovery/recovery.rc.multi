@@ -2,7 +2,7 @@ on early-init
     start ueventd
 
 on init
-    export PATH /sbin:/vendor/su:/vendor/bin:/system0/bin:/system0/xbin:/system1/bin:/system1/xbin
+    export PATH /sbin:/vendor/bin:/system0/bin:/system0/xbin:/system1/bin:/system1/xbin
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_ROOT /system0
     export ANDROID_ROOT1 /system1
