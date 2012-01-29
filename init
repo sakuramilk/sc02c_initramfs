@@ -8,9 +8,6 @@ BUILD_TARGET=`cat /proc/sys/kernel/build_target`
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
 /sbin/busybox umount /proc
 
-# build target
-BUILD_TARGET="1"
-
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
   /sbin/busybox sh /mbs/init.recovery.sh $BUILD_TARGET
