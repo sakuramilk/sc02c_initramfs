@@ -24,7 +24,7 @@ else
 fi
 
 # cleanup
-/sbin/busybox rm -fr /dev/* /misc/dev.tar
+/sbin/busybox rm -fr /dev/* /misc/dev.tar /mbs/mnt/tmp_system /mbs/mnt/tmp_data
 
 # init start
 /sbin/busybox mv /_init /init

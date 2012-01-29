@@ -769,8 +769,8 @@ service playsound /system/bin/playsound
     oneshot
 
 service samsungani /sbin/bootanimation.sh
-    user root
-    group root
+    user BOOTANI_ID
+    group BOOTANI_ID
     disabled
     oneshot
 
