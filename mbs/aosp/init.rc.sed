@@ -41,12 +41,15 @@ loglevel 3
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
 
+# bootanimation wait one loop
+    setprop sys.bootanim_wait 1
+
 # Backwards Compat - XXX: Going away in G*
     symlink /mnt/sdcard /sdcard
     symlink /mnt/emmc /emmc
 
-    mkdir /system
-    mkdir /xdata 0775 system system
+    # mkdir /system
+    mkdir /data 0771 system system
     mkdir /cache 0771 system cache
     mkdir /config 0500 root root
 
@@ -104,7 +107,7 @@ loglevel 3
     write /dev/cpuctl/bg_non_interactive/cpu.shares 52
 
 # ko files for sakuractive
-    insmod /lib/modules/cpufreq_sakuractive.ko
+#   insmod /lib/modules/cpufreq_sakuractive.ko
 
 # ko files for vibrator
     insmod /lib/modules/vibrator.ko
@@ -115,18 +118,24 @@ loglevel 3
 # ko files for FM Radio
 #   insmod /lib/modules/Si4709_driver.ko
 
+# TweakGS2 extention properties
+on property:persist.tgs2.logger=1
+    insmod /lib/modules/logger.ko
+
+on property:persist.tgs2.cifs=1
+    insmod /lib/modules/cifs.ko
+
+on property:persist.tgs2.ntfs=1
+    insmod /lib/modules/ntfs.ko
+
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount ext4 /dev/block/mmcblk0p9 /system wait ro
+    @MBS_SYSTEM_MOUNT
+    @MBS_SYSTEM_SYMLINK
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     exec check_filesystem /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 /xdata nosuid nodev noatime wait crypt discard,noauto_da_alloc
-
-    # create symbolic link for primary boot rom data dir
-    chown system system /xdata
-    chmod 0775 /xdata
-    symlink /xdata/data0 /data
+    mount ext4 /dev/block/mmcblk0p10 @MBS_DATA_MOUNT_POINT nosuid nodev noatime wait crypt discard,noauto_da_alloc
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs
@@ -147,8 +156,10 @@ on post-fs
     # mount rootfs rootfs / ro remount
 
     # We chown/chmod /data again so because mount is run as root + defaults
-    chown system system /data
-    chmod 0771 /data
+    chown system system @MBS_DATA_MOUNT_POINT
+    chmod 0771 @MBS_DATA_MOUNT_POINT
+
+    @MBS_DATA_SYMLINK
 
     # readahead files which are used in "preloadClasses"
     start sreadaheadd
@@ -667,9 +678,9 @@ service media /system/bin/mediaserver
     group system audio camera graphics inet net_bt net_bt_admin net_raw radio
     ioprio rt 4
 
-service bootanim /system/bin/bootanimation
-    user graphics
-    group graphics
+service bootanim /sbin/bootanimation
+    user root
+    group root
     disabled
     oneshot
 
@@ -770,15 +781,6 @@ service dumpstate /system/bin/dumpstate -s
 service tvout /system/bin/tvoutserver
      user system
      group graphics
-
-on property:conf.androidLogger=1
-    insmod /lib/modules/logger.ko
-
-on property:conf.cifs=1
-    insmod /lib/modules/cifs.ko
-
-on property:conf.ntfs=1
-    insmod /lib/modules/ntfs.ko
 
 # extra user init
 service userinit /data/local/userinit.rc
