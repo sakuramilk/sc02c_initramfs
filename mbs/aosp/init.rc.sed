@@ -49,7 +49,7 @@ loglevel 3
     symlink /mnt/emmc /emmc
 
     # mkdir /system
-    mkdir /data 0771 system system
+    #mkdir /data 0771 system system
     mkdir /cache 0771 system cache
     mkdir /config 0500 root root
 
