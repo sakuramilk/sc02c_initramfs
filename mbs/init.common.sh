@@ -43,12 +43,13 @@ func_mbs_mount_init()
 func_mbs_foce_pramary()
 {
 	export ROM_ID=0
-	export ROM_DATA_PART_0=/dev/mmcblk0p10
+	export ROM_DATA_PART_0=/dev/block/mmcblk0p10
 	export ROM_DATA_IMG_0=""
 	#wraning last "/" is not need
 	export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev/data0
+	#export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev
 
-	export ROM_SYS_PART=/dev/mmcblk0p9
+	export ROM_SYS_PART=/dev/block/mmcblk0p9
 	export ROM_SYS_IMG=""
 	#wraning last "/" is not need
 	export ROM_SYS_PATH=/mbs/mnt/rom0/sys_dev
