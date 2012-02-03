@@ -222,22 +222,6 @@ echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 #make init.rc 
 #============================================================
 if [ "$BUILD_TARGET" = '2' ]; then
-	export ROM_DATA_PART_0
-	export ROM_DATA_PART_1
-	export ROM_DATA_PART_2
-	export ROM_DATA_PART_3
-	export ROM_DATA_PART_4
-	export ROM_DATA_PART_5
-	export ROM_DATA_PART_6
-	export ROM_DATA_PART_7
-	export ROM_DATA_PATH_0
-	export ROM_DATA_PATH_1
-	export ROM_DATA_PATH_2
-	export ROM_DATA_PATH_3
-	export ROM_DATA_PATH_4
-	export ROM_DATA_PATH_5
-	export ROM_DATA_PATH_6
-	export ROM_DATA_PATH_7
 	/sbin/busybox sh /mbs/init.multi.sh $ROM_ID $LOOP_CNT
 	
 	#/sbin/busybox sh /mbs/init.share.sh
