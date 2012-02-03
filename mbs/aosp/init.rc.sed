@@ -131,11 +131,12 @@ on property:persist.tgs2.ntfs=1
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    @MBS_SYSTEM_MOUNT
-    @MBS_SYSTEM_SYMLINK
+#@ROM_SYS_PART_STA
+#@ROM_SYS_PART_END
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     exec check_filesystem /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 @MBS_DATA_MOUNT_POINT nosuid nodev noatime wait crypt discard,noauto_da_alloc
+#@ROM_DATA_PART_STA
+#@ROM_DATA_PART_END
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs

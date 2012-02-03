@@ -13,16 +13,11 @@ if [ "$RECOVERY_MODE" = '1' ]; then
   /sbin/busybox sh /mbs/init.recovery.sh $BUILD_TARGET
 else
   # mormal mode
-  if [ "$BUILD_TARGET" = '2' ]; then
-    /sbin/busybox sh /mbs/init.multi.sh
-  else
-    /sbin/busybox sh /mbs/init.single.sh $BUILD_TARGET
-  fi
+  /sbin/busybox sh /mbs/init.common.sh $BUILD_TARGET
 fi
 
 # cleanup
 /sbin/busybox rm -fr /dev/* /misc/dev.tar
-
 # init start
 /sbin/busybox mv /_init /init
 exec /init

@@ -55,7 +55,7 @@ loglevel 3
 
     # mkdir /system
     mkdir /dbdata 0771 system system
-    mkdir /data 0771 system system
+    #mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 
@@ -138,8 +138,8 @@ on property:persist.tgs2.ntfs=1
 
 on fs
     # mount mtd partitions
-    @MBS_SYSTEM_MOUNT
-    @MBS_SYSTEM_SYMLINK
+#@ROM_SYS_PART_STA
+#@ROM_SYS_PART_END
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait 
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
@@ -163,15 +163,8 @@ on post-fs
 
     # We chown/chmod /data again so because mount is run as root + defaults
     # use movinand second partition as /data.
-    mkdir @MBS_DATA_MOUNT_POINT
-
-    exec check_filesystem /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 @MBS_DATA_MOUNT_POINT nosuid nodev noatime wait crypt discard,noauto_da_alloc
-
-    chown system system @MBS_DATA_MOUNT_POINT
-    chmod 0771 @MBS_DATA_MOUNT_POINT
-
-    @MBS_DATA_SYMLINK
+#@ROM_DATA_PART_STA
+#@ROM_DATA_PART_END
 
     mkdir /data/dbdata
     chown system system /data/dbdata

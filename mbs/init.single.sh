@@ -1,30 +1,53 @@
 #!/sbin/busybox sh
 
-/sbin/busybox mount -t ext4 /dev/block/mmcblk0p9 /mbs/mnt/system
-/sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /mbs/mnt/data
+# parameters
+#  $1 = LOOP_CNT
 
-/sbin/busybox mkdir /system
-/sbin/busybox chmod 755 /system
+#set config
+INIT_RC_DST=/init.rc
+INIT_RC_SRC=/mbs/init.rc.temp
+#--------------
+n=`grep -n @ROM_SYS_PART_STA $INIT_RC_SRC | cut -d':' -f1`
+head -n $n $INIT_RC_SRC > $INIT_RC_DST
+#--------------
+#==========================================================================
+# System
+#==========================================================================
+echo  " 
+#------------------------------
+    mkdir /system
+    chown root root /system
+    chmod 0775 /system
+    mount ext4 /dev/block/mmcblk0p9 /system wait ro
+#------------------------------
+ " >> $INIT_RC_DST
 
-if [ "$1" = '1' ]; then
-  # build target aosp
-  /sbin/busybox sh /mbs/init.aosp.sh \
-    "mount ext4 \/dev\/block\/mmcblk0p9 \/system wait ro" \
-    "" \
-    "\/data" \
-    ""
-else
-  # build target samsung
-  /sbin/busybox sh /mbs/init.samsung.sh \
-    "mount ext4 \/dev\/block\/mmcblk0p9 \/system wait ro" \
-    "" \
-    "\/data" \
-    ""
-fi
+#==========================================================================
+# /data
+#==========================================================================
+n=`grep -n @ROM_SYS_PART_END $INIT_RC_SRC | cut -d':' -f1`
+m=`grep -n @ROM_DATA_PART_STA $INIT_RC_SRC | cut -d':' -f1`
+sed -n "$n,${m}p" $INIT_RC_SRC >> $INIT_RC_DST 
 
-# Set TweakGS2 properties
-/sbin/busybox sh /mbs/init.tgs2.sh
 
-/sbin/busybox umount /mbs/mnt/system
-/sbin/busybox umount /mbs/mnt/data
+echo  " 
+#------------------------------
+    # use movinand second partition as /data.
+    mkdir /data
+
+    exec check_filesystem /dev/block/mmcblk0p10 ext4
+    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc
+
+    chown system system /data
+    chmod 0771 /data
+#------------------------------
+ " >> $INIT_RC_DST
+
+
+#--------------
+n=`grep -n @ROM_DATA_PART_END $INIT_RC_SRC | cut -d':' -f1`
+m=`wc -l $INIT_RC_SRC| cut -d' ' -f1`
+sed -n "$n,${m}p" $INIT_RC_SRC >> $INIT_RC_DST 
+#/sbin/busybox cp $INIT_RC_DST /xdata/mbs_init.rc.out2
+#---------------------------
 

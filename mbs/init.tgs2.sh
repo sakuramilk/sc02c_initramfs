@@ -1,6 +1,6 @@
 #!/sbin/busybox sh
 
-PROP_PATH=/mbs/mnt/data/tweakgs2.prop
+PROP_PATH=/xdata/tweakgs2.prop
 
 BOOT_SND=`grep audioflinger\.bootsnd $PROP_PATH | cut -d'=' -f2`
 if [ "$BOOT_SND" = '1' ]; then
