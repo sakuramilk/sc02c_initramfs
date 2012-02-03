@@ -194,21 +194,21 @@ func_vender_init()
 	mnt_data=$mnt_base/data_dev
 
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
+	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
 	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir
-	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_data
+	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data
 
 	#temporary 
 	#make "data" dir is need to mount data patation.
-		mkdir -p $BOOT_ROM_DATA_PATH
-
+	mkdir -p $BOOT_ROM_DATA_PATH
 
 	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
-		ROM_VENDOR=samsung
+		#ROM_VENDOR=samsung
 		/sbin/busybox sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
 	else
+		#ROM_VENDOR=aosp
 		/sbin/busybox sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
-		ROM_VENDOR=aosp
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	/sbin/busybox cp /mbs/init.rc.temp /xdata/init.rc.temp
