@@ -3,18 +3,15 @@
 #set config
 BUILD_TARGET=$1
 
-if [ "$BUILD_TARGET" = '2' ]; then
-	MBS_CONF="/xdata/mbs.conf"
-	LOOP_CNT="0 1 2 3 4 5 6 7"
-else
-	#todo skip making mbs info by fixed value
-	MBS_CONF="/mbs/single.conf"
-	LOOP_CNT="0"
-fi
-
 export MBS_LOG=/xdata/mbs4.log
+MBS_CONF="/xdata/mbs.conf"
+LOOP_CNT="0 1 2 3 4 5 6 7"
+
+#note)script process is "main process" is 1st
+
 #------------------------------------------------------
 #init mbs dev mnt point
+#	$1: loop cnt
 #------------------------------------------------------
 func_mbs_mount_init()
 {
@@ -23,7 +20,7 @@ func_mbs_mount_init()
 
 	#make mbs dev mnt point
 	chmod 755 /mbs/mnt
-	for i in $LOOP_CNT; do
+	for i in $1; do
 		mkdir /mbs/mnt/rom${i}
 		mkdir /mbs/mnt/rom${i}/data_dev
 		mkdir /mbs/mnt/rom${i}/data_img
@@ -39,6 +36,7 @@ func_mbs_mount_init()
 }
 #------------------------------------------------------
 #foce ROM0 boot setting
+#	$1: mount data path ( single / multi switch )
 #------------------------------------------------------
 func_mbs_foce_pramary()
 {
@@ -46,23 +44,24 @@ func_mbs_foce_pramary()
 	export ROM_DATA_PART_0=/dev/block/mmcblk0p10
 	export ROM_DATA_IMG_0=""
 	#wraning last "/" is not need
-	export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev/data0
+	export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev$1
 	#export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev
 
 	export ROM_SYS_PART=/dev/block/mmcblk0p9
 	export ROM_SYS_IMG=""
 	#wraning last "/" is not need
 	export ROM_SYS_PATH=/mbs/mnt/rom0/sys_dev
+
 }
 
 #------------------------------------------------------
 #create loopback device
-#    arg_mnt_base
-#    arg_img_part: partation
-#    arg_img_path:$ROM_DATA_IMG
-#    arg_mnt_img: data_img / sys_img
-#    arg_mnt_loop: data_loop / sys_loop
-#    arg_dev_id; 20${id} /10${id}
+#    $1:arg_mnt_base
+#    $2:arg_img_part: partation
+#    $3:arg_img_path:$ROM_DATA_IMG
+#    $4:arg_mnt_img: data_img / sys_img
+#    $5:arg_mnt_loop: data_loop / sys_loop
+#    $6:arg_dev_id; 20${id} /10${id}
 #------------------------------------------------------
 func_mbs_create_loop_dev()
 {
@@ -97,22 +96,13 @@ func_mbs_create_loop_dev()
 	fi
 }
 
-#==============================================================================
-# main process
-#==============================================================================
-/sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
-
-BOOT_DATE=`date`
-echo "boot start : $BOOT_DATE" > $MBS_LOG
-
-#/system is synbolic link when multi boot.
-func_mbs_mount_init
-
-#get mbs.conf 
-if [ ! -f $MBS_CONF ]; then
-	func_mbs_foce_pramary
-	echo "$MBS_CONF is not exist. booting rom0..." >> $MBS_LOG
-else
+#------------------------------------------------------
+#mbs.conf anarisis & get infomation
+#    no args
+#    no check mbs.conf exist
+#------------------------------------------------------
+func_get_mbs_info()
+{
 	# get boot rom number
 	ret=`grep mbs\.boot\.rom $MBS_CONF | cut -d'=' -f2`
 	if [ -e "$ret" ]; then
@@ -180,7 +170,7 @@ else
 
 	if [ -z "$ROM_SYS_PART" ]; then
 		echo rom${ROM_ID} sys is invalid:foce rom0 boot >> $MBS_LOG			
-		func_mbs_foce_pramary
+		func_mbs_foce_pramary  "/data0"
 	else
 		#ROM_SYS_PATH=/mbs_sys$ROM_SYS_PATH
 		ROM_SYS_PATH=$mnt_dir$ROM_SYS_PATH
@@ -190,57 +180,99 @@ else
 	echo ROM_SYS_PART=$ROM_SYS_PART >> $MBS_LOG
 	echo ROM_SYS_IMG=$ROM_SYS_IMG >> $MBS_LOG
 	echo ROM_SYS_PART=$ROM_SYS_PATH >> $MBS_LOG
-fi
+
+}
+
+#------------------------------------------------------
+#check rom vendor
+#    no args
+#------------------------------------------------------
+func_vender_init()
+{
+	mnt_base=/mbs/mnt/rom${ROM_ID}
+	mnt_dir=$mnt_base/sys_dev
+	mnt_data=$mnt_base/data_dev
+
+	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
+
+	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir
+	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_data
+
+	#temporary 
+	#make "data" dir is need to mount data patation.
+		mkdir -p $BOOT_ROM_DATA_PATH
 
 
-#============================================================
-# check rom vendor
-#============================================================
-mnt_base=/mbs/mnt/rom${ROM_ID}
-mnt_dir=$mnt_base/sys_dev
-mnt_data=$mnt_base/data_dev
+	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
+		ROM_VENDOR=samsung
+		/sbin/busybox sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
+	else
+		/sbin/busybox sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
+		ROM_VENDOR=aosp
+	fi
+	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
+	/sbin/busybox cp /mbs/init.rc.temp /xdata/init.rc.temp
 
-eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
+	/sbin/busybox umount $mnt_dir
+	/sbin/busybox umount $mnt_data
+}
 
-/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir
-/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_data
-
-if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
-	ROM_VENDOR=samsung
-	/sbin/busybox sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
-else
-	/sbin/busybox sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
-	ROM_VENDOR=aosp
-fi
-echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
-/sbin/busybox cp /mbs/init.rc.temp /xdata/init.rc.temp
-
-/sbin/busybox umount $mnt_dir
-/sbin/busybox umount $mnt_data
-#=========================================================================
-
-#============================================================
+#------------------------------------------------------
 #make init.rc 
-#============================================================
+#    $1:ROM_ID
+#    $2:LOOP_CNT
+#------------------------------------------------------
+func_make_init_rc()
+{
+	if [ "$BUILD_TARGET" = '2' ]; then
+		/sbin/busybox sh /mbs/init.multi.sh $1 $2
+		
+		#/sbin/busybox sh /mbs/init.share.sh
+	else
+		/sbin/busybox sh /mbs/init.single.sh 0
+	fi
+	# Set TweakGS2 properties
+	/sbin/busybox sh /mbs/init.tgs2.sh
+
+	/sbin/busybox cp /init.rc /xdata/init.rc
+
+	echo end of init >> $MBS_LOG
+	/sbin/busybox umount /xdata
+
+
+	#mbs dir remove,if single boot 
+	if [ "$BUILD_TARGET" != '2' ]; then
+		rm -r /mbs
+		rmdir /xdata
+	fi
+}
+#==============================================================================
+# main process
+#==============================================================================
+/sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
+BOOT_DATE=`date`
+echo "boot start : $BOOT_DATE" > $MBS_LOG
+
 if [ "$BUILD_TARGET" = '2' ]; then
-	/sbin/busybox sh /mbs/init.multi.sh $ROM_ID $LOOP_CNT
-	
-	#/sbin/busybox sh /mbs/init.share.sh
+
+	#patation,path infomation init
+	if [ ! -f $MBS_CONF ]; then
+		LOOP_CNT="0"
+		func_mbs_mount_init $LOOP_CNT
+		func_mbs_foce_pramary "/data0"
+		echo "$MBS_CONF is not exist. booting rom0..." >> $MBS_LOG
+	else
+		func_mbs_mount_init $LOOP_CNT
+		func_get_mbs_info
+	fi
+
 else
-	/sbin/busybox sh /mbs/init.single.sh 0
+	#/system is synbolic link when multi boot.
+	func_mbs_mount_init 
+	func_mbs_foce_pramary
 fi
-# Set TweakGS2 properties
-/sbin/busybox sh /mbs/init.tgs2.sh
 
-/sbin/busybox cp /init.rc /xdata/init.rc
+func_vender_init
+func_make_init_rc $ROM_ID $LOOP_CNT
 
-echo end of init >> $MBS_LOG
-/sbin/busybox umount /xdata
-
-
-#mbs dir remove,if single boot 
-if [ "$BUILD_TARGET" != '2' ]; then
-	rm -r /mbs
-	rmdir /xdata
-fi
 ##
