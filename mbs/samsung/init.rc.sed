@@ -163,8 +163,8 @@ on post-fs
 
     # We chown/chmod /data again so because mount is run as root + defaults
     # use movinand second partition as /data.
-    exec check_filesystem /dev/block/mmcblk0p10 ext4
-    @MBS_DATA_MOUNT_MAIN
+#@ROM_DATA_PART_STA
+#@ROM_DATA_PART_END
 
     mkdir /data/system
     chown system system /data/system
