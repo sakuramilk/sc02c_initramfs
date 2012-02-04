@@ -46,7 +46,7 @@ echo  "
 
 	mkdir /share
     chown system system /share
-    chmod 0771 /xdata
+    chmod 0771 /share
  " >> $INIT_RC_DST
 
 for i in $LOOP_CNT; do
@@ -87,10 +87,5 @@ sed -n "$n,${m}p" $INIT_RC_SRC >> $INIT_RC_DST
 #---------------------------
 
 
-#============================================================
-# App Share
-#============================================================
-if [ ! -d /xdata/share ]; then
-	mkdir /xdata/share
-fi
+
 

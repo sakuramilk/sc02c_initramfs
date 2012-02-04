@@ -227,7 +227,7 @@ func_make_init_rc()
 	if [ "$BUILD_TARGET" = '2' ]; then
 		/sbin/busybox sh /mbs/init.multi.sh $1 $2
 		
-		#/sbin/busybox sh /mbs/init.share.sh
+		/sbin/busybox sh /mbs/init.share.sh
 	else
 		/sbin/busybox sh /mbs/init.single.sh 0
 	fi
@@ -265,6 +265,9 @@ if [ "$BUILD_TARGET" = '2' ]; then
 		func_mbs_mount_init $LOOP_CNT
 		func_get_mbs_info
 	fi
+	#put current boot rom nuber info
+	mkdir /mbs/stat
+	echo $ROM_ID > /mbs/stat/bootrom
 
 else
 	#/system is synbolic link when multi boot.
