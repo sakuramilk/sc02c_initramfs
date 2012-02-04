@@ -2,13 +2,12 @@ on early-init
     start ueventd
 
 on init
-    export PATH /sbin:/vendor/bin:/system0/bin:/system0/xbin:/system1/bin:/system1/xbin
+    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
-    export ANDROID_ROOT /system0
-    export ANDROID_ROOT1 /system1
-    export ANDROID_DATA /xdata
-    export EXTERNAL_STORAGE /sdcard
-    export PHONE_STORAGE /emmc
+    export ANDROID_ROOT /system
+    export ANDROID_DATA /data
+    export EXTERNAL_STORAGE /emmc
+    export PHONE_STORAGE /sdcard
 
     # for clockworkmod
     symlink /misc /etc
@@ -21,9 +20,8 @@ on init
 # create mountpoints
     mkdir /sdcard 0000 system system
     mkdir /emmc 0000 system system
-    mkdir /system0
-    mkdir /system1
-    mkdir /xdata 0771 system system
+    mkdir /system
+    mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /efs
     mkdir /tmp
@@ -32,9 +30,6 @@ on init
     mkdir /mnt 0775 root root
 
     #mount /tmp /tmp tmpfs   
-
-	# for dualboot
-    symlink /xdata/data0 /data
 
 on early-fs
 
@@ -53,8 +48,7 @@ on early-fs
 
 on fs
     mount tmpfs tmpfs /tmp mode=0755    
-    mount ext4 /dev/block/mmcblk0p9 /system0 wait rw
-    mount ext4 /dev/block/mmcblk0p12 /system1 wait rw
+    mount ext4 /dev/block/mmcblk0p9 /system wait rw
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
@@ -67,6 +61,10 @@ on fs
     exec apply_system_policy /dev/block/mmcblk0p11 vfat
 
 on post-fs
+
+    #temp
+    chmod 750 /sbin/fat.format
+
     write /proc/sys/kernel/panic_on_oops 1
     write /proc/sys/kernel/hung_task_timeout_secs 0
     write /proc/cpu/alignment 4
