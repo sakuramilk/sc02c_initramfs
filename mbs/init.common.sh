@@ -5,16 +5,32 @@ BUILD_TARGET=$1
 
 export MBS_LOG=/xdata/mbs4.log
 MBS_CONF="/xdata/mbs.conf"
+#ERR_MSG="/mbs/stat/err"
+ERR_MSG="/xdata/mbs.err"
 LOOP_CNT="0 1 2 3 4 5 6 7"
 
 #note)script process is "main process" is 1st
 
 #------------------------------------------------------
+#foce ROM0 boot setting
+#	$1: error msg
+#------------------------------------------------------
+func_error()
+{
+	echo $1 > $ERR_MSG
+
+	reboot recovery
+}
+
+#------------------------------------------------------
 #init mbs dev mnt point
 #	$1: loop cnt
 #------------------------------------------------------
-func_mbs_mount_init()
+func_mbs_init()
 {
+	#err staus clear (no check exist)
+	rm $ERR_MSG
+	
 	#/system is synbolic link when multi boot.
 	rmdir /system
 
@@ -151,8 +167,10 @@ func_get_mbs_info()
 	#check data valid
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"$ROM_ID
 	if [ -z "$ROM_DATA_PART" ]; then
-		echo rom${ROM_ID} data is invalid:foce rom0 boot >> $MBS_LOG
-		ROM_ID=0
+		echo rom${ROM_ID} data is invalid >> $MBS_LOG
+		#ROM_ID=0
+
+		func_error "rom${ROM_ID} data is invalid"
 	fi
 
 	export ROM_SYS_PART=`grep mbs\.rom$ROM_ID\.system\.part $MBS_CONF | cut -d'=' -f2`
@@ -169,8 +187,9 @@ func_get_mbs_info()
 	fi
 
 	if [ -z "$ROM_SYS_PART" ]; then
-		echo rom${ROM_ID} sys is invalid:foce rom0 boot >> $MBS_LOG			
-		func_mbs_foce_pramary  "/data0"
+		echo rom${ROM_ID} sys is invalid >> $MBS_LOG
+		#func_mbs_foce_pramary  "/data0"
+		func_error "rom${ROM_ID} sys is invalid"
 	else
 		#ROM_SYS_PATH=/mbs_sys$ROM_SYS_PATH
 		ROM_SYS_PATH=$mnt_dir$ROM_SYS_PATH
@@ -196,8 +215,14 @@ func_vender_init()
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir
-	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data
+	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir || func_error "$ROM_SYS_PART is invalid part"
+	if [ ! -d $ROM_SYS_PATH ];then
+		func_error "$ROM_SYS_PATH is invalid path"
+	fi
+	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
+	if [ ! -d $BOOT_ROM_DATA_PATH ];then
+		func_error "$BOOT_ROM_DATA_PATH is invalid path"
+	fi
 
 	#temporary 
 	#make "data" dir is need to mount data patation.
@@ -257,12 +282,13 @@ if [ "$BUILD_TARGET" = '2' ]; then
 
 	#patation,path infomation init
 	if [ ! -f $MBS_CONF ]; then
-		LOOP_CNT="0"
-		func_mbs_mount_init $LOOP_CNT
-		func_mbs_foce_pramary "/data0"
-		echo "$MBS_CONF is not exist. booting rom0..." >> $MBS_LOG
+		#LOOP_CNT="0"
+		#func_mbs_init $LOOP_CNT
+		#func_mbs_foce_pramary "/data0"
+		echo "$MBS_CONF is not exist" >> $MBS_LOG
+		func_error "$MBS_CONF is not exist"
 	else
-		func_mbs_mount_init $LOOP_CNT
+		func_mbs_init $LOOP_CNT
 		func_get_mbs_info
 	fi
 	#put current boot rom nuber info
@@ -271,11 +297,12 @@ if [ "$BUILD_TARGET" = '2' ]; then
 
 else
 	#/system is synbolic link when multi boot.
-	func_mbs_mount_init 
+	func_mbs_init 
 	func_mbs_foce_pramary
 fi
 
 func_vender_init
 func_make_init_rc $ROM_ID $LOOP_CNT
 
+exit 0
 ##
