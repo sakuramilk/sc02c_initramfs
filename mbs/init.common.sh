@@ -8,6 +8,7 @@ MBS_CONF="/xdata/mbs.conf"
 #ERR_MSG="/mbs/stat/err"
 ERR_MSG="/xdata/mbs.err"
 LOOP_CNT="0 1 2 3 4 5 6 7"
+export RET=""
 
 #note)script process is "main process" is 1st
 
@@ -94,21 +95,23 @@ func_mbs_create_loop_dev()
 	img_path=$mnt_img$arg_img_path
 	dev_loop=$arg_mnt_base/$arg_mnt_loop
 	
-	/sbin/busybox mount -t ext4 $arg_img_part $mnt_img
-
+	echo "/sbin/busybox mount -t ext4 $arg_img_part $mnt_img" >> $MBS_LOG
+	echo img_part=$arg_img_part >> $MBS_LOG
 	echo mnt_img=$mnt_img >> $MBS_LOG
 	echo img_path=$img_path >> $MBS_LOG
 	echo dev_loop=$dev_loop >> $MBS_LOG
-
+	
+	/sbin/busybox mount -t ext4 $arg_img_part $mnt_img
+	#echo `ls -l $mnt_img` >> $MBS_LOG
 	# set loopback devce
 	if [ -f $img_path ]; then
 		echo create loop: $dev_loop >> $MBS_LOG
 		/sbin/busybox mknod $dev_loop b 7 ${arg_dev_id}
 		/sbin/busybox losetup $dev_loop $img_path
-		RET=$dev_loop
+		export RET=$dev_loop
 	else
 		export RET=""	
-		#echo rom${id} image is not exist >> $MBS_LOG
+		echo "warning)$img_path is not exist" >> $MBS_LOG
 	fi
 }
 
@@ -220,10 +223,6 @@ func_vender_init()
 		func_error "$ROM_SYS_PATH is invalid path"
 	fi
 	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
-	if [ ! -d $BOOT_ROM_DATA_PATH ];then
-		func_error "$BOOT_ROM_DATA_PATH is invalid path"
-	fi
-
 	#temporary 
 	#make "data" dir is need to mount data patation.
 	mkdir -p $BOOT_ROM_DATA_PATH
@@ -288,7 +287,7 @@ if [ "$BUILD_TARGET" = '2' ]; then
 		echo "$MBS_CONF is not exist" >> $MBS_LOG
 		func_error "$MBS_CONF is not exist"
 	else
-		func_mbs_init $LOOP_CNT
+		func_mbs_init "$LOOP_CNT"
 		func_get_mbs_info
 	fi
 	#put current boot rom nuber info
