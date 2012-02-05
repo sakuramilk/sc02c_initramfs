@@ -136,6 +136,7 @@ func_mbs_create_loop_dev()
 		/sbin/busybox losetup $dev_loop $img_path
 		export RET=$dev_loop
 	else
+		/sbin/busybox umount $mnt_img
 		export RET=""	
 		echo "warning)$img_path is not exist" >> $MBS_LOG
 	fi
