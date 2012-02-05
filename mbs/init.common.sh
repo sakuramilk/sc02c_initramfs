@@ -33,8 +33,11 @@ func_mbs_init()
 	rm $ERR_MSG
 	
 	#/system is synbolic link when multi boot.
-	rmdir /system
-
+	#rmdir /system
+	#system is directory mount 2012/02/05
+	mkdir /system
+	chmod 755 /system
+	
 	#make mbs dev mnt point
 	chmod 755 /mbs/mnt
 	for i in $1; do
@@ -62,14 +65,14 @@ func_mbs_foce_pramary()
 	export ROM_DATA_IMG_0=""
 	#wraning last "/" is not need
 	export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev$1
-	#export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev
 
 	export ROM_SYS_PART=/dev/block/mmcblk0p9
 	export ROM_SYS_IMG=""
 	#wraning last "/" is not need
-	export ROM_SYS_PATH=/mbs/mnt/rom0/sys_dev
-
+	#export ROM_SYS_PATH=/mbs/mnt/rom0/sys_dev
+	export ROM_SYS_PATH="/system"
 }
+
 
 #------------------------------------------------------
 #create loopback device
@@ -89,19 +92,42 @@ func_mbs_create_loop_dev()
     arg_mnt_loop=$5
     arg_dev_id=$6
 
-	#echo ROM_DATA_IMG :$img_path >> $MBS_LOG	
 	#mount img part device
 	mnt_img=$arg_mnt_base/$arg_mnt_img
 	img_path=$mnt_img$arg_img_path
 	dev_loop=$arg_mnt_base/$arg_mnt_loop
 	
-	echo "/sbin/busybox mount -t ext4 $arg_img_part $mnt_img" >> $MBS_LOG
 	echo img_part=$arg_img_part >> $MBS_LOG
 	echo mnt_img=$mnt_img >> $MBS_LOG
 	echo img_path=$img_path >> $MBS_LOG
 	echo dev_loop=$dev_loop >> $MBS_LOG
 	
-	/sbin/busybox mount -t ext4 $arg_img_part $mnt_img
+	fotmat="ext4"
+
+	dev=`echo  $arg_img_part | grep -o /dev/block/mmcblk.`
+
+
+	if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
+			fotmat="vfat"
+	fi
+#format auto detect... dose not works..
+#	echo dev=$dev >> $MBS_LOG
+#	if [ "$dev" = "/dev/block/mmcblk0" ]; then
+#		
+#		if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ]; then
+#			fotmat="vfat"
+#		fi
+#	else
+#		/sbin/busybox fdisk -l $dev >> $MBS_LOG
+#		res=`/sbin/busybox fdisk -l $dev | grep $arg_img_part | grep -o "Win95 FAT32"`
+#		echo res=$res >> $MBS_LOG
+#		if [ ! -z $res ]; then
+#			fotmat="vfat"
+#		fi
+#	fi
+	echo "fotmat=$fotmat" >> $MBS_LOG
+	
+	/sbin/busybox mount -t $fotmat $arg_img_part $mnt_img
 	#echo `ls -l $mnt_img` >> $MBS_LOG
 	# set loopback devce
 	if [ -f $img_path ]; then
@@ -178,8 +204,8 @@ func_get_mbs_info()
 
 	export ROM_SYS_PART=`grep mbs\.rom$ROM_ID\.system\.part $MBS_CONF | cut -d'=' -f2`
 	export ROM_SYS_IMG=`grep mbs\.rom$ROM_ID\.system\.img $MBS_CONF | cut -d'=' -f2`
-	export ROM_SYS_PATH=`grep mbs\.rom$ROM_ID\.system\.path $MBS_CONF | cut -d'=' -f2`
-
+	#export ROM_SYS_PATH=`grep mbs\.rom$ROM_ID\.system\.path $MBS_CONF | cut -d'=' -f2`
+	export ROM_SYS_PATH="/system"
 	mnt_base=/mbs/mnt/rom${ROM_ID}
 	mnt_dir=$mnt_base/sys_dev
 	if [ ! -z "$ROM_SYS_IMG" ]; then
@@ -193,15 +219,15 @@ func_get_mbs_info()
 		echo rom${ROM_ID} sys is invalid >> $MBS_LOG
 		#func_mbs_foce_pramary  "/data0"
 		func_error "rom${ROM_ID} sys is invalid"
-	else
-		#ROM_SYS_PATH=/mbs_sys$ROM_SYS_PATH
-		ROM_SYS_PATH=$mnt_dir$ROM_SYS_PATH
-		ROM_SYS_PATH=`echo $ROM_SYS_PATH | sed -e "s/\/$//g"`
+	#else
+	#	ROM_SYS_PATH=/mbs_sys$ROM_SYS_PATH
+	#	ROM_SYS_PATH=$mnt_dir$ROM_SYS_PATH
+	#	ROM_SYS_PATH=`echo $ROM_SYS_PATH | sed -e "s/\/$//g"`
 	fi		
 	#for Debug
 	echo ROM_SYS_PART=$ROM_SYS_PART >> $MBS_LOG
 	echo ROM_SYS_IMG=$ROM_SYS_IMG >> $MBS_LOG
-	echo ROM_SYS_PART=$ROM_SYS_PATH >> $MBS_LOG
+	echo ROM_SYS_PATH=$ROM_SYS_PATH >> $MBS_LOG
 
 }
 
@@ -218,7 +244,7 @@ func_vender_init()
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	/sbin/busybox mount -t ext4 $ROM_SYS_PART $mnt_dir || func_error "$ROM_SYS_PART is invalid part"
+	/sbin/busybox mount -t ext4 $ROM_SYS_PART $ROM_SYS_PATH || func_error "$ROM_SYS_PART is invalid part"
 	if [ ! -d $ROM_SYS_PATH ];then
 		func_error "$ROM_SYS_PATH is invalid path"
 	fi
@@ -237,7 +263,7 @@ func_vender_init()
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	/sbin/busybox cp /mbs/init.rc.temp /xdata/init.rc.temp
 
-	/sbin/busybox umount $mnt_dir
+	/sbin/busybox umount $ROM_SYS_PATH
 	/sbin/busybox umount $mnt_data
 }
 
@@ -281,9 +307,6 @@ if [ "$BUILD_TARGET" = '2' ]; then
 
 	#patation,path infomation init
 	if [ ! -f $MBS_CONF ]; then
-		#LOOP_CNT="0"
-		#func_mbs_init $LOOP_CNT
-		#func_mbs_foce_pramary "/data0"
 		echo "$MBS_CONF is not exist" >> $MBS_LOG
 		func_error "$MBS_CONF is not exist"
 	else

@@ -21,11 +21,10 @@ n=`grep -n @ROM_SYS_PART_STA $INIT_RC_SRC | cut -d':' -f1`
 head -n $n $INIT_RC_SRC > $INIT_RC_DST
 
 echo  "  #-- /system
-    mkdir $mnt_dir
-    chown root root $mnt_dir
-    chmod 0775 $mnt_dir
-    mount ext4 $ROM_SYS_PART $mnt_dir wait ro
-    symlink $ROM_SYS_PATH /system
+    mkdir /system
+    chown root root /system
+    chmod 0775 /system
+    mount ext4 $ROM_SYS_PART /system wait ro
  " >> $INIT_RC_DST
 #------------------------------
 
