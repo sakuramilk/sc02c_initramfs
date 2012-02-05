@@ -14,6 +14,7 @@ if [ "$RECOVERY_MODE" = '1' ]; then
 else
   # mormal mode
   /sbin/busybox sh /mbs/init.common.sh $BUILD_TARGET
+  reboot recovery
 fi
 
 # cleanup

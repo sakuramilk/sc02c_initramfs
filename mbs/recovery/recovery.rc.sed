@@ -48,7 +48,7 @@ on early-fs
 
 on fs
     mount tmpfs tmpfs /tmp mode=0755    
-    mount ext4 /dev/block/mmcblk0p9 /system wait rw
+    @MBS_MOUNT_SYSTEM
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
