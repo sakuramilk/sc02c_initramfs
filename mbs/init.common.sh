@@ -250,9 +250,6 @@ func_vender_init()
 		func_error "$ROM_SYS_PATH is invalid path"
 	fi
 	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
-	#temporary 
-	#make "data" dir is need to mount data patation.
-	mkdir -p $BOOT_ROM_DATA_PATH
 
 	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
 		#ROM_VENDOR=samsung
