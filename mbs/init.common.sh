@@ -255,6 +255,8 @@ func_vender_init()
 	#echo mnt_data=$mnt_data >> $MBS_LOG
 	#echo BOOT_ROM_DATA_PATH=$BOOT_ROM_DATA_PATH >> $MBS_LOG
 	mkdir -p $BOOT_ROM_DATA_PATH
+    chmod 771 $BOOT_ROM_DATA_PATH
+    chown system.system $BOOT_ROM_DATA_PATH
 
 	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
 		ROM_VENDOR=samsung

@@ -2,7 +2,7 @@
 
 if [ "$1" = '2' ]; then
     # build target multi
-    /sbin/busybox cp /mbs/recovery/recovery /sbin/recovery.multi
+    /sbin/busybox cp /mbs/recovery/recovery.multi /sbin/recovery
 
     # parse mbs.conf
     mkdir -p /mbs/mnt/data
