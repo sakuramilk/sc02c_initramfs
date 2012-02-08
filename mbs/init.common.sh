@@ -252,13 +252,15 @@ func_vender_init()
 	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
 	#temporary 
 	#make "data" dir is need to mount data patation.
+	#echo mnt_data=$mnt_data >> $MBS_LOG
+	#echo BOOT_ROM_DATA_PATH=$BOOT_ROM_DATA_PATH >> $MBS_LOG
 	mkdir -p $BOOT_ROM_DATA_PATH
 
 	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
-		#ROM_VENDOR=samsung
+		ROM_VENDOR=samsung
 		/sbin/busybox sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
 	else
-		#ROM_VENDOR=aosp
+		ROM_VENDOR=aosp
 		/sbin/busybox sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG

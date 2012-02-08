@@ -7,7 +7,7 @@
 /sbin/busybox cp /mbs/samsung/redbend_ua /sbin/
 
 # check bootanimation
-if [ -f $2/data/local/bootanimation.zip ] || [ -f $1/media/bootanimation.zip ]; then
+if [ -f $2/local/bootanimation.zip ] || [ -f $1/media/bootanimation.zip ]; then
   BOOTANI_UID="root"
 else
   BOOTANI_UID="graphics"
