@@ -44,6 +44,9 @@ loglevel 3
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
 
+# bootanimation wait one loop
+    setprop sys.bootanim_wait 1
+
 #add booting sound property 
 #	setprop audioflinger.bootsnd 1
 
