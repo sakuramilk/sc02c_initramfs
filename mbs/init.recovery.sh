@@ -4,9 +4,16 @@ if [ "$1" = '2' ]; then
     # build target multi
     /sbin/busybox cp /mbs/recovery/recovery.multi /sbin/recovery
 
+    # create stat dir
+    mkdir /mbs/stat
+
     # parse mbs.conf
     mkdir -p /mbs/mnt/data
     /sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /mbs/mnt/data
+
+    # move errmsg
+    /sbin/busybox mv /mbs/mnt/data/mbs.err /mbs/stat/
+
     MBS_CONF=/mbs/mnt/data/mbs.conf
 
     if [ ! -f $MBS_CONF ]; then
@@ -33,9 +40,6 @@ if [ "$1" = '2' ]; then
     ROM_DATA_PATH=`grep mbs\.rom$ROM_ID\.data\.path $MBS_CONF | cut -d'=' -f2`
 
     /sbin/busybox umount /mbs/mnt/data
-
-    # create stat dir
-    mkdir /mbs/stat
 
     # check error
     if [ -z "$ROM_SYSTEM_PART" ]; then
