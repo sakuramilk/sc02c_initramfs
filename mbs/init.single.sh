@@ -48,6 +48,6 @@ echo  "
 n=`grep -n @ROM_DATA_PART_END $INIT_RC_SRC | cut -d':' -f1`
 m=`wc -l $INIT_RC_SRC| cut -d' ' -f1`
 sed -n "$n,${m}p" $INIT_RC_SRC >> $INIT_RC_DST 
-#/sbin/busybox cp $INIT_RC_DST /xdata/mbs_init.rc.out2
+#cp $INIT_RC_DST /xdata/mbs_init.rc.out2
 #---------------------------
 

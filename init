@@ -1,24 +1,29 @@
 #!/sbin/busybox sh
 
-# extract block device files
-/sbin/busybox tar xvf /misc/dev.tar
+PATH_=$PATH
+export PATH=/sbin
 
-/sbin/busybox mount -t proc proc /proc
+# extract block device files
+tar xvf /misc/dev.tar
+
+mount -t proc proc /proc
 BUILD_TARGET=`cat /proc/sys/kernel/build_target`
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
-/sbin/busybox umount /proc
+umount /proc
 
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
-  /sbin/busybox sh /mbs/init.recovery.sh $BUILD_TARGET
+  sh /mbs/init.recovery.sh $BUILD_TARGET
 else
   # mormal mode
-  /sbin/busybox sh /mbs/init.common.sh $BUILD_TARGET
+  sh /mbs/init.common.sh $BUILD_TARGET
 fi
 
 # cleanup
-/sbin/busybox rm -fr /dev/* /misc/dev.tar
+rm -fr /dev/* /misc/dev.tar
 # init start
-/sbin/busybox mv /_init /init
+mv /_init /init
+
+export PATH=$PATH_
 exec /init
 

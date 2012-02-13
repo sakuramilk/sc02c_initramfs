@@ -19,7 +19,9 @@ export RET=""
 func_error()
 {
 	echo $1 > $ERR_MSG
-
+        sync
+        sync
+        sync
 	reboot recovery
 }
 
@@ -118,8 +120,8 @@ func_mbs_create_loop_dev()
 #			fotmat="vfat"
 #		fi
 #	else
-#		/sbin/busybox fdisk -l $dev >> $MBS_LOG
-#		res=`/sbin/busybox fdisk -l $dev | grep $arg_img_part | grep -o "Win95 FAT32"`
+#		fdisk -l $dev >> $MBS_LOG
+#		res=`fdisk -l $dev | grep $arg_img_part | grep -o "Win95 FAT32"`
 #		echo res=$res >> $MBS_LOG
 #		if [ ! -z $res ]; then
 #			fotmat="vfat"
@@ -127,16 +129,16 @@ func_mbs_create_loop_dev()
 #	fi
 	echo "fotmat=$fotmat" >> $MBS_LOG
 	
-	/sbin/busybox mount -t $fotmat $arg_img_part $mnt_img
+	mount -t $fotmat $arg_img_part $mnt_img
 	#echo `ls -l $mnt_img` >> $MBS_LOG
 	# set loopback devce
 	if [ -f $img_path ]; then
 		echo create loop: $dev_loop >> $MBS_LOG
-		/sbin/busybox mknod $dev_loop b 7 ${arg_dev_id}
-		/sbin/busybox losetup $dev_loop $img_path
+		mknod $dev_loop b 7 ${arg_dev_id}
+		losetup $dev_loop $img_path
 		export RET=$dev_loop
 	else
-		/sbin/busybox umount $mnt_img
+		umount $mnt_img
 		export RET=""	
 		echo "warning)$img_path is not exist" >> $MBS_LOG
 	fi
@@ -245,31 +247,31 @@ func_vender_init()
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	/sbin/busybox mount -t ext4 $ROM_SYS_PART $ROM_SYS_PATH || func_error "$ROM_SYS_PART is invalid part"
+	mount -t ext4 $ROM_SYS_PART $ROM_SYS_PATH || func_error "$ROM_SYS_PART is invalid part"
 	if [ ! -d $ROM_SYS_PATH ];then
 		func_error "$ROM_SYS_PATH is invalid path"
 	fi
-	/sbin/busybox mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
+	mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
 	#temporary 
 	#make "data" dir is need to mount data patation.
 	#echo mnt_data=$mnt_data >> $MBS_LOG
 	#echo BOOT_ROM_DATA_PATH=$BOOT_ROM_DATA_PATH >> $MBS_LOG
 	mkdir -p $BOOT_ROM_DATA_PATH
-    chmod 771 $BOOT_ROM_DATA_PATH
-    chown system.system $BOOT_ROM_DATA_PATH
+	chmod 771 $BOOT_ROM_DATA_PATH
+	chown system.system $BOOT_ROM_DATA_PATH
 
 	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
 		ROM_VENDOR=samsung
-		/sbin/busybox sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
+		sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
 	else
 		ROM_VENDOR=aosp
-		/sbin/busybox sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
+		sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH 
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
-	/sbin/busybox cp /mbs/init.rc.temp /xdata/init.rc.temp
+	cp /mbs/init.rc.temp /xdata/init.rc.temp
 
-	/sbin/busybox umount $ROM_SYS_PATH
-	/sbin/busybox umount $mnt_data
+	umount $ROM_SYS_PATH
+	umount $mnt_data
 }
 
 #------------------------------------------------------
@@ -280,19 +282,19 @@ func_vender_init()
 func_make_init_rc()
 {
 	if [ "$BUILD_TARGET" = '2' ]; then
-		/sbin/busybox sh /mbs/init.multi.sh $1 $2
+		sh /mbs/init.multi.sh $1 $2
 		
-		/sbin/busybox sh /mbs/init.share.sh
+		sh /mbs/init.share.sh
 	else
-		/sbin/busybox sh /mbs/init.single.sh 0
+		sh /mbs/init.single.sh 0
 	fi
 	# Set TweakGS2 properties
-	/sbin/busybox sh /mbs/init.tgs2.sh
+	sh /mbs/init.tgs2.sh
 
-	/sbin/busybox cp /init.rc /xdata/init.rc
+	cp /init.rc /xdata/init.rc
 
 	echo end of init >> $MBS_LOG
-	/sbin/busybox umount /xdata
+	umount /xdata
 
 
 	#mbs dir remove,if single boot 
@@ -304,7 +306,7 @@ func_make_init_rc()
 #==============================================================================
 # main process
 #==============================================================================
-/sbin/busybox mount -t ext4 /dev/block/mmcblk0p10 /xdata
+mount -t ext4 /dev/block/mmcblk0p10 /xdata
 BOOT_DATE=`date`
 echo "boot start : $BOOT_DATE" > $MBS_LOG
 
