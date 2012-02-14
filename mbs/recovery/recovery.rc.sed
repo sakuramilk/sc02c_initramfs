@@ -7,7 +7,7 @@ on init
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
 
-    symlink /system/etc /etc
+    symlink /misc /etc
 
     mkdir /sdcard
     mkdir /emmc
