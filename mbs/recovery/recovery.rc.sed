@@ -3,80 +3,31 @@ on early-init
 
 on init
     export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
-    export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
-    export EXTERNAL_STORAGE /emmc
-    export PHONE_STORAGE /sdcard
+    export EXTERNAL_STORAGE /sdcard
 
-    # for clockworkmod
-    symlink /misc /etc
+    symlink /system/etc /etc
 
-    # override device prop
-    setprop ro.product.device galaxys2
-    setprop ro.build.product galaxys2
-    setprop ro.product.board galaxys2
-
-# create mountpoints
-    mkdir /sdcard 0000 system system
-    mkdir /emmc 0000 system system
+    mkdir /sdcard
+    mkdir /emmc
+    mkdir /usbdisk
     mkdir /system
-    mkdir /data 0771 system system
-    mkdir /cache 0770 system cache
-    mkdir /efs
-    mkdir /tmp
-    mkdir /dbdata
-
-    mkdir /mnt 0775 root root
-
-    #mount /tmp /tmp tmpfs   
-
-on early-fs
-
-    # rfs drivers
-    insmod /lib/modules/rfs_glue.ko
-    insmod /lib/modules/rfs_fat.ko
-
-    # logcat driver
-    insmod /lib/modules/logger.ko
-
-    # parameter block
-    mkdir /mnt/.lfs 0755 root root
-    insmod /lib/modules/j4fs.ko
-    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
-
+    mkdir /data
+    mkdir /cache
+    mkdir /preload
+    mount /tmp /tmp tmpfs
 
 on fs
-    mount tmpfs tmpfs /tmp mode=0755    
-    @MBS_MOUNT_SYSTEM
-    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
-
-    # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
-    mkdir /efs
-    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
-    chown radio system /efs
-    chmod 0771 /efs
-
-    # verfiy filesystem (UMS)
-    exec apply_system_policy /dev/block/mmcblk0p11 vfat
-
-on post-fs
-
-    #temp
-    chmod 750 /sbin/fat.format
-
-    write /proc/sys/kernel/panic_on_oops 1
-    write /proc/sys/kernel/hung_task_timeout_secs 0
-    write /proc/cpu/alignment 4
-    write /proc/sys/kernel/sched_latency_ns 10000000
-    write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
-    write /proc/sys/kernel/sched_compat_yield 1
-    write /proc/sys/kernel/sched_child_runs_first 0
-
-    # let recovery handle mounting /system
-    # umount /system
+    mount ext4 /dev/block/mmcblk0p9 /system
 
 on boot
+
+# Permissions for mDNIe
+    chown system media_rw /sys/class/mdnie/mdnie/mode
+    chown system media_rw /sys/class/mdnie/mdnie/outdoor
+    chown system media_rw /sys/class/mdnie/mdnie/scenario
+    write /sys/class/mdnie/mdnie/scenario 4
 
     ifup lo
     hostname localhost
@@ -88,14 +39,33 @@ service ueventd /sbin/ueventd
     critical
 
 service console /sbin/sh
+    class core
     console
+    disabled
+    group log
+    
+on property:ro.debuggable=1
+    start console
 
 service recovery /sbin/recovery
 
 service adbd /sbin/adbd recovery
+    disabled
 
-on property:persist.service.adb.enable=1
+# Always start adbd on userdebug and eng builds
+on property:ro.debuggable=1
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 04e8
+    write /sys/class/android_usb/android0/idProduct 6860
+    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/enable 1
+    write /sys/class/android_usb/android0/iManufacturer $ro.product.manufacturer
+    write /sys/class/android_usb/android0/iProduct $ro.product.model
+    write /sys/class/android_usb/android0/iSerial $ro.serialno
     start adbd
 
-on property:persist.service.adb.enable=0
-    start adbd
+# Restart adbd so it can run as root
+on property:service.adb.root=1
+    write /sys/class/android_usb/android0/enable 0
+    restart adbd
+    write /sys/class/android_usb/android0/enable 1

@@ -7,9 +7,10 @@ export PATH=/sbin
 tar xvf /misc/dev.tar
 
 mount -t proc proc /proc
-BUILD_TARGET=`cat /proc/sys/kernel/build_target`
+#BUILD_TARGET=`cat /proc/sys/kernel/build_target`
+BUILD_TARGET=2
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
-umount /proc
+#umount /proc
 
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode

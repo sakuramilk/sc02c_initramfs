@@ -32,7 +32,6 @@ on early-fs
 	mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait
 
 	mkdir /data/log 0777
-	mkdir /data/anr 0777
 
 	chmod 0666 /dev/log/radio
 	chmod 0666 /dev/log/main
@@ -67,7 +66,7 @@ service playlpm /system/bin/playlpm
 service immvibed /system/bin/immvibed 
 	oneshot
 
-service lpmkey /system/bin/charging_mode
+service lpmkey /system/bin/lpmkey
     	user root
 
 # adbd is controlled by the persist.service.adb.enable system property
