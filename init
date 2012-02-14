@@ -15,8 +15,8 @@ if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
   sh /mbs/init.recovery.sh $BUILD_TARGET
 else
-  # mormal mode
-  sh /mbs/init.common.sh $BUILD_TARGET
+  # normal mode
+  sh /mbs/init.normal.sh $BUILD_TARGET
 fi
 
 # cleanup
