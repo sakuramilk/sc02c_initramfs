@@ -16,6 +16,7 @@ export RET=""
 #------------------------------------------------------
 func_error()
 {
+	echo $1 >> $MBS_LOG
 	echo $1 > $ERR_MSG
 	reboot recovery
 }
@@ -59,7 +60,7 @@ rom_id=$1
 KERNEL_PART=`grep mbs\.rom$rom_id\.kernel\.part $MBS_CONF | cut -d'=' -f2`
 KERNEL_IMG=`grep mbs\.rom$rom_id\.kernel\.img $MBS_CONF | cut -d'=' -f2`
 #for Debug
-echo KERNEL_PART=$KERNEL_PART >> $MBS_LOG
+echo KERNEL_PART=$KERNEL_PART > $MBS_LOG
 echo KERNEL_IMG=$KERNEL_IMG >> $MBS_LOG
 
 mnt_base=/mbs/mnt/kernel
