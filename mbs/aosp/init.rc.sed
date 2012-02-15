@@ -37,8 +37,8 @@ loglevel 3
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
 
-    mkdir /system
-    mkdir /data 0771 system system
+    #mkdir /system
+    #mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 
@@ -95,10 +95,14 @@ loglevel 3
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount yaffs2 mtd@system /system
-    mount yaffs2 mtd@system /system ro remount
-    mount yaffs2 mtd@userdata /data nosuid nodev
+#@ROM_SYS_PART_STA
+#@ROM_SYS_PART_END
+    #mount yaffs2 mtd@system /system
+    #mount yaffs2 mtd@system /system ro remount
+    #mount yaffs2 mtd@userdata /data nosuid nodev
     mount yaffs2 mtd@cache /cache nosuid nodev
+#@ROM_DATA_PART_STA
+#@ROM_DATA_PART_END
 
 on post-fs
     # once everything is setup, no need to modify /

@@ -19,7 +19,7 @@ on init
     mount /tmp /tmp tmpfs
 
 on fs
-    mount ext4 /dev/block/mmcblk0p9 /system
+    @MBS_MOUNT_SYSTEM
 
 on boot
 

@@ -8,9 +8,10 @@ else
 fi
 
 # copy rc files
-cp /mbs/samsung/init.smdkc210.rc /
-cp /mbs/samsung/ueventd.rc /
-cp /mbs/samsung/ueventd.smdkc210.rc /
+cp /mbs/aosp/init.smdk4210.rc /
+cp /mbs/aosp/init.smdk4210.usb.rc /
+cp /mbs/aosp/ueventd.rc /
+cp /mbs/aosp/ueventd.smdk4210.rc /
 cp /mbs/samsung/redbend_ua /sbin/
 
 # create init.rc
