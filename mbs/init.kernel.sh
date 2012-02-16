@@ -74,6 +74,8 @@ if [ -n "$KERNEL_PART" ]; then
 		else
 			func_error "$mnt_base$KERNEL_IMG is not exist"
 		fi
+
+		umount $mnt_base
 	else
 		func_error "$mnt_base$KERNEL_IMG is not exist"
 	fi

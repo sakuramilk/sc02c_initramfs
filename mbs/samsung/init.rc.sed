@@ -43,8 +43,8 @@ loglevel 3
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
 
-    mkdir /system
-    mkdir /data 0771 system system
+    #mkdir /system
+    #mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 	mkdir /preload 0771 system system
@@ -107,8 +107,10 @@ on fs
 # mount ext4 partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
     #mount ext4 /dev/block/mmcblk0p9 /system
-    mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
-    
+    #mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
+#@ROM_SYS_PART_STA
+#@ROM_SYS_PART_END
+
     exec sfsck /dev/block/mmcblk0p7 ext4
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
@@ -135,8 +137,10 @@ on fs
     exec sformat /dev/block/mmcblk0p11 vfat
 	  
 on post-fs
-    exec sfsck /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
+    #exec sfsck /dev/block/mmcblk0p10 ext4
+    #mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
+#@ROM_DATA_PART_STA
+#@ROM_DATA_PART_END
 
     # once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
@@ -177,6 +181,10 @@ on post-fs-data
     # Create dump dir and collect dumps.
     # Do this before we mount cache so eventually we can use cache for
     # storing dumps on platforms which do not have a dedicated dump partition.
+
+    mkdir /data/system
+    chown system system /data/system
+    chmod 0666 /data/system
 
     mkdir /data/dontpanic
     chown root log /data/dontpanic

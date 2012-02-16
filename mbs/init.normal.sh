@@ -18,6 +18,7 @@ export RET=""
 #------------------------------------------------------
 func_error()
 {
+	echo $1 >> $MBS_LOG
 	echo $1 > $ERR_MSG
         sync
         sync
@@ -110,7 +111,7 @@ func_mbs_create_loop_dev()
 
 
 	if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
-			fotmat=vfat
+                fotmat=vfat
 	fi
 #format auto detect... dose not works..
 #	echo dev=$dev >> $MBS_LOG
@@ -254,10 +255,7 @@ func_vender_init()
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	mount -t ext4 $ROM_SYS_PART $ROM_SYS_PATH || func_error "$ROM_SYS_PART is invalid part"
-	if [ ! -d $ROM_SYS_PATH ];then
-		func_error "$ROM_SYS_PATH is invalid path"
-	fi
+	mount -t ext4 $ROM_SYS_PART /mbs/mnt/system || func_error "$ROM_SYS_PART is invalid part"
 	mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
 	#temporary 
 	#make "data" dir is need to mount data patation.
@@ -271,23 +269,26 @@ func_vender_init()
 	#SDK_VER=`grep ro\.build\.version\.sdk $ROM_SYS_PATH/build.prop | cut -d'=' -f2`
 	#if [ "$SDK_VER" = '14' -o "$SDK_VER" = '15' ]; then
 	#	ANDROID_VER=ics
-    #else
+	#else
 	#	ANDROID_VER=gb
-    #fi
+	#fi
 
 	#sh /mbs/init.common.sh $ANDROID_VER
 
-	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
+	if [ -f /mbs/mnt/system/framework/twframework.jar ]; then
 		ROM_VENDOR=samsung
-		sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH
+		sh /mbs/init.samsung.sh /mbs/mnt/system $BOOT_ROM_DATA_PATH
 	else
 		ROM_VENDOR=aosp
-		sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH
+		sh /mbs/init.aosp.sh /mbs/mnt/system $BOOT_ROM_DATA_PATH
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	cp /mbs/init.rc.temp /xdata/init.rc.temp
 
-	umount $ROM_SYS_PATH
+	# Set TweakGS2 properties
+	sh /mbs/init.tgs2.sh $BOOT_ROM_DATA_PATH
+
+	umount /mbs/mnt/system
 	umount $mnt_data
 }
 
@@ -305,8 +306,6 @@ func_make_init_rc()
 	else
 		sh /mbs/init.single.sh 0
 	fi
-	# Set TweakGS2 properties
-	sh /mbs/init.tgs2.sh
 
 	cp /init.rc /xdata/init.rc
 

@@ -100,7 +100,9 @@ on fs
     #mount yaffs2 mtd@system /system
     #mount yaffs2 mtd@system /system ro remount
     #mount yaffs2 mtd@userdata /data nosuid nodev
-    mount yaffs2 mtd@cache /cache nosuid nodev
+    exec sfsck /dev/block/mmcblk0p7 ext4
+    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
+
 #@ROM_DATA_PART_STA
 #@ROM_DATA_PART_END
 
