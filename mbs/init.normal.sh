@@ -18,6 +18,7 @@ export RET=""
 #------------------------------------------------------
 func_error()
 {
+	echo $1 >> $MBS_LOG
 	echo $1 > $ERR_MSG
         sync
         sync
@@ -271,9 +272,9 @@ func_vender_init()
 	#SDK_VER=`grep ro\.build\.version\.sdk $ROM_SYS_PATH/build.prop | cut -d'=' -f2`
 	#if [ "$SDK_VER" = '14' -o "$SDK_VER" = '15' ]; then
 	#	ANDROID_VER=ics
-    #else
+	#else
 	#	ANDROID_VER=gb
-    #fi
+	#fi
 
 	#sh /mbs/init.common.sh $ANDROID_VER
 
@@ -286,6 +287,9 @@ func_vender_init()
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	cp /mbs/init.rc.temp /xdata/init.rc.temp
+
+	# Set TweakGS2 properties
+	sh /mbs/init.tgs2.sh $BOOT_ROM_DATA_PATH
 
 	umount $ROM_SYS_PATH
 	umount $mnt_data
@@ -305,8 +309,6 @@ func_make_init_rc()
 	else
 		sh /mbs/init.single.sh 0
 	fi
-	# Set TweakGS2 properties
-	sh /mbs/init.tgs2.sh
 
 	cp /init.rc /xdata/init.rc
 
