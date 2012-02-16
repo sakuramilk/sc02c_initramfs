@@ -111,7 +111,7 @@ func_mbs_create_loop_dev()
 
 
 	if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
-                fotmat=vfat
+			fotmat=vfat
 	fi
 #format auto detect... dose not works..
 #	echo dev=$dev >> $MBS_LOG
