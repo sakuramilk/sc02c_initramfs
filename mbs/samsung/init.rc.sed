@@ -22,7 +22,7 @@ loglevel 3
     export ANDROID_DATA /data
     export ASEC_MOUNTPOINT /mnt/asec
     export LOOP_MOUNTPOINT /mnt/obb
-    export BOOTCLASSPATH /system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/framework2.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar
+    export BOOTCLASSPATH /system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/framework2.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar:/system/framework/sechardware.jar
 
 # Disable CFQ slice idle delay
     write /sys/block/mmcblk0/queue/iosched/slice_idle 0
@@ -217,7 +217,7 @@ on post-fs-data
     mkdir /data/misc/bluetooth 0770 system system
     mkdir /data/misc/keystore 0700 keystore keystore
     mkdir /data/misc/keychain 0771 system system
-    mkdir /data/misc/vpn 0777 system system
+    mkdir /data/misc/vpn 0770 system vpn
     mkdir /data/misc/systemkeys 0700 system system
     mkdir /data/misc/vpn/profiles 0770 system system
     mkdir /data/misc/radio 0775 radio system
@@ -305,6 +305,10 @@ on post-fs-data
 # MTP Device permission.
 	chmod 0660 /dev/usb_mtp_gadget
 	chown system system /dev/usb_mtp_gadget
+
+# terminal mode
+    chmod 0660 /sys/class/android_usb/android0/terminal_version
+    chown system system /sys/class/android_usb/android0/terminal_version
 
 # NFC
     setprop ro.nfc.port "I2C"
@@ -545,6 +549,7 @@ on boot
     chown system radio /sys/class/sec/switch/otg_test
     chown system radio /sys/class/sec/switch/adc_debounce_time
     chown system radio /sys/class/sec/switch/status
+    chown system radio /sys/class/sec/switch/adc
     chown system radio /mnt/.lfs/sw_sel
 
 # Permissions for OTG Test
@@ -575,9 +580,19 @@ on boot
 # +++++++++++++++++++++++++++++++++++++++++++
 
 
-#RTC logging daemon
+# RTC logging daemon
     chmod 0770 /system/bin/rtc_log.sh
     chown system system /system/bin/rtc_log.sh
+
+# DVFS - cpufreq ondemand
+    write /sys/devices/system/cpu/cpufreq/ondemand/down_differential 5
+    write /sys/devices/system/cpu/cpufreq/ondemand/up_threshold 85
+
+# DVFS - limit cpufreq during booting sequence
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 1000000
+    write /data/dvfs "sleep 10 && echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed && sleep 30 && echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+    chmod 0770 /data/dvfs
 
 # Set this property so surfaceflinger is not started by system_init
     setprop system_init.startsurfaceflinger 0
@@ -656,16 +671,6 @@ on property:sys.usb.config=accessory,adb
 
 on property:persist.sys.usb.config=*
     setprop sys.usb.config $persist.sys.usb.config
-
-# DVFS - cpufreq ondemand
-    write /sys/devices/system/cpu/cpufreq/ondemand/down_differential 5
-    write /sys/devices/system/cpu/cpufreq/ondemand/up_threshold 85
-
-# DVFS - limit cpufreq during booting sequence
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 1000000
-    write /data/dvfs "sleep 10 && echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed && sleep 30 && echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
-    chmod 0770 /data/dvfs
 
 ## Daemon processes to be run by init.
 ##
