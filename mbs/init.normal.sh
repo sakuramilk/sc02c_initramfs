@@ -110,7 +110,7 @@ func_mbs_create_loop_dev()
 	dev=`echo  $arg_img_part | grep -o /dev/block/mmcblk.`
 
 
-	if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
+	if [ "$arg_img_part" = "/dev/block/mmcblk0p11" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
 			fotmat=vfat
 	fi
 #format auto detect... dose not works..
