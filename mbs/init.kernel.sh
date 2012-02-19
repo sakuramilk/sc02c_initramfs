@@ -54,11 +54,11 @@ func_compare_current_md5()
 
 #==============================================================================
 # main process
-# $1 : rom_id
+# $1 : KERNEL_PART
+# $2 : KERNEL_IMG
 #==============================================================================
-rom_id=$1
-KERNEL_PART=`grep mbs\.rom$rom_id\.kernel\.part $MBS_CONF | cut -d'=' -f2`
-KERNEL_IMG=`grep mbs\.rom$rom_id\.kernel\.img $MBS_CONF | cut -d'=' -f2`
+KERNEL_PART=$1
+KERNEL_IMG=$2
 #for Debug
 echo KERNEL_PART=$KERNEL_PART > $MBS_LOG
 echo KERNEL_IMG=$KERNEL_IMG >> $MBS_LOG
