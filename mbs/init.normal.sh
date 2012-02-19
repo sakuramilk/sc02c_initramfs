@@ -144,9 +144,33 @@ func_mbs_create_loop_dev()
 		export RET=$dev_loop
 	else
 		umount $mnt_img
-		export RET=""	
+		export RET=""	4
 		echo "warning)$img_path is not exist" >> $MBS_LOG
 	fi
+}
+
+#------------------------------------------------------
+# check patation
+#   $1 xxxx.part value
+#   $2 xxxx.img value
+#------------------------------------------------------
+func_check_part()
+{
+	case $1 in
+		"mmcblk0p9"  )    return 0 ;;
+		"mmcblk0p12" )    return 0 ;;
+		"mmcblk1p2"	 )    return 0 ;;
+		"mmcblk1p3"	 )    return 0 ;;
+		"mmcblk0p11" )    echo "vfat part" ;;
+		"mmcblk1p1"	 )    echo "vfat part" ;;
+	    *)       func_error "$1 is invalid part" ;;
+	esac
+
+	if [ -z $2 ]; then
+		func_error  "no img detect!"
+	fi
+	#echo "part is OK"
+	return 0
 }
 
 #------------------------------------------------------
@@ -166,7 +190,12 @@ func_get_mbs_info()
 	echo "ROM_ID : $ROM_ID" >> $MBS_LOG
 
 	# check kernel
-	sh /mbs/init.kernel.sh $ROM_ID
+	KERNEL_PART=`grep mbs\.rom$rom_id\.kernel\.part $MBS_CONF | cut -d'=' -f2`
+	KERNEL_IMG=`grep mbs\.rom$rom_id\.kernel\.img $MBS_CONF | cut -d'=' -f2`
+
+#not tested yet...
+#	func_check_part $KERNEL_PART $KERNEL_IMG
+	sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
 
 	echo "start of for" >> $MBS_LOG
 	for i in $LOOP_CNT; do
@@ -175,6 +204,9 @@ func_get_mbs_info()
 		ROM_DATA_PART=`grep mbs\.rom$i\.data\.part $MBS_CONF | cut -d'=' -f2`
 		ROM_DATA_IMG=`grep mbs\.rom$i\.data\.img $MBS_CONF | cut -d'=' -f2`
 		ROM_DATA_PATH=`grep mbs\.rom$i\.data\.path $MBS_CONF | cut -d'=' -f2`
+
+		#not tested yet...
+		#	func_check_part $ROM_DATA_PART $ROM_DATA_IMG
 
 		mnt_base=/mbs/mnt/rom${i}
 		mnt_dir=$mnt_base/data_dev
@@ -217,6 +249,10 @@ func_get_mbs_info()
 	export ROM_SYS_IMG=`grep mbs\.rom$ROM_ID\.system\.img $MBS_CONF | cut -d'=' -f2`
 	#export ROM_SYS_PATH=`grep mbs\.rom$ROM_ID\.system\.path $MBS_CONF | cut -d'=' -f2`
 	export ROM_SYS_PATH="/system"
+
+	#not tested yet...
+	#	func_check_part $ROM_SYS_PART $ROM_SYS_IMG
+	
 	mnt_base=/mbs/mnt/rom${ROM_ID}
 	mnt_dir=$mnt_base/sys_dev
 	if [ ! -z "$ROM_SYS_IMG" ]; then
