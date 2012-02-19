@@ -157,12 +157,13 @@ func_mbs_create_loop_dev()
 func_check_part()
 {
 	case $1 in
-		"mmcblk0p9"  )    return 0 ;;
-		"mmcblk0p12" )    return 0 ;;
-		"mmcblk1p2"	 )    return 0 ;;
-		"mmcblk1p3"	 )    return 0 ;;
-		"mmcblk0p11" )    echo "vfat part" ;;
-		"mmcblk1p1"	 )    echo "vfat part" ;;
+		"/dev/block/mmcblk0p9"  )    return 0 ;;
+		"/dev/block/mmcblk0p10"  )    return 0 ;;
+		"/dev/block/mmcblk0p12" )    return 0 ;;
+		"/dev/block/mmcblk1p2"	 )    return 0 ;;
+		"/dev/block/mmcblk1p3"	 )    return 0 ;;
+		"/dev/block/mmcblk0p11" )    echo "vfat part" ;;
+		"/dev/block/mmcblk1p1"	 )    echo "vfat part" ;;
 	    *)       func_error "$1 is invalid part" ;;
 	esac
 
@@ -190,11 +191,13 @@ func_get_mbs_info()
 	echo "ROM_ID : $ROM_ID" >> $MBS_LOG
 
 	# check kernel
-	KERNEL_PART=`grep mbs\.rom$rom_id\.kernel\.part $MBS_CONF | cut -d'=' -f2`
-	KERNEL_IMG=`grep mbs\.rom$rom_id\.kernel\.img $MBS_CONF | cut -d'=' -f2`
+	KERNEL_PART=`grep mbs\.rom$ROM_ID\.kernel\.part $MBS_CONF | cut -d'=' -f2`
+	KERNEL_IMG=`grep mbs\.rom$ROM_ID\.kernel\.img $MBS_CONF | cut -d'=' -f2`
 
-#not tested yet...
-#	func_check_part $KERNEL_PART $KERNEL_IMG
+	echo "KERNEL_PART=$KERNEL_PART" >> $MBS_LOG
+	echo "KERNEL_IMG=$KERNEL_IMG" >> $MBS_LOG
+
+	func_check_part $KERNEL_PART $KERNEL_IMG
 	sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
 
 	echo "start of for" >> $MBS_LOG
@@ -205,30 +208,31 @@ func_get_mbs_info()
 		ROM_DATA_IMG=`grep mbs\.rom$i\.data\.img $MBS_CONF | cut -d'=' -f2`
 		ROM_DATA_PATH=`grep mbs\.rom$i\.data\.path $MBS_CONF | cut -d'=' -f2`
 
-		#not tested yet...
-		#	func_check_part $ROM_DATA_PART $ROM_DATA_IMG
+		if [ ! -z "$ROM_DATA_PART" ]; then
+			func_check_part $ROM_DATA_PART $ROM_DATA_IMG
 
-		mnt_base=/mbs/mnt/rom${i}
-		mnt_dir=$mnt_base/data_dev
+			mnt_base=/mbs/mnt/rom${i}
+			mnt_dir=$mnt_base/data_dev
 
-		if [ ! -z "$ROM_DATA_IMG" ]; then
-			func_mbs_create_loop_dev $mnt_base $ROM_DATA_PART $ROM_DATA_IMG data_img data_loop 20${i}
-			ROM_DATA_PART=$RET
-			if [ -z "$ROM_DATA_PART" ]; then
-				echo rom${i} image is not exist >> $MBS_LOG
+			if [ ! -z "$ROM_DATA_IMG" ]; then
+				func_mbs_create_loop_dev $mnt_base $ROM_DATA_PART $ROM_DATA_IMG data_img data_loop 20${i}
+				ROM_DATA_PART=$RET
+				if [ -z "$ROM_DATA_PART" ]; then
+					echo rom${i} image is not exist >> $MBS_LOG
+				fi
 			fi
+			ROM_DATA_PATH=$mnt_dir$ROM_DATA_PATH
+			ROM_DATA_PATH=`echo $ROM_DATA_PATH | sed -e "s/\/$//g"`
+
+			eval export ROM_DATA_PART_$i=$ROM_DATA_PART
+			eval export ROM_DATA_IMG_$i=$ROM_DATA_IMG
+			eval export ROM_DATA_PATH_$i=$ROM_DATA_PATH
+
+			#for Debug
+			eval echo mbs.rom${i}.data.part=$"ROM_DATA_PART_"$i >> $MBS_LOG
+			eval echo mbs.rom${i}.data.img=$"ROM_DATA_IMG_"$i >> $MBS_LOG
+			eval echo mbs.rom${i}.data.path=$"ROM_DATA_PATH_"$i >> $MBS_LOG
 		fi
-		ROM_DATA_PATH=$mnt_dir$ROM_DATA_PATH
-		ROM_DATA_PATH=`echo $ROM_DATA_PATH | sed -e "s/\/$//g"`
-
-		eval export ROM_DATA_PART_$i=$ROM_DATA_PART
-		eval export ROM_DATA_IMG_$i=$ROM_DATA_IMG
-		eval export ROM_DATA_PATH_$i=$ROM_DATA_PATH
-
-		#for Debug
-		eval echo mbs.rom${i}.data.part=$"ROM_DATA_PART_"$i >> $MBS_LOG
-		eval echo mbs.rom${i}.data.img=$"ROM_DATA_IMG_"$i >> $MBS_LOG
-		eval echo mbs.rom${i}.data.path=$"ROM_DATA_PATH_"$i >> $MBS_LOG
 	done
 
 	echo "end of for" >> $MBS_LOG
@@ -250,8 +254,8 @@ func_get_mbs_info()
 	#export ROM_SYS_PATH=`grep mbs\.rom$ROM_ID\.system\.path $MBS_CONF | cut -d'=' -f2`
 	export ROM_SYS_PATH="/system"
 
-	#not tested yet...
-	#	func_check_part $ROM_SYS_PART $ROM_SYS_IMG
+	
+	func_check_part $ROM_SYS_PART $ROM_SYS_IMG
 	
 	mnt_base=/mbs/mnt/rom${ROM_ID}
 	mnt_dir=$mnt_base/sys_dev
