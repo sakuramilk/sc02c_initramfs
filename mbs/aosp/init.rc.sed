@@ -783,6 +783,9 @@ service tvout /system/bin/tvoutserver
      user system
      group graphics
 
+on property:sys.bootanim_completed=1
+    stop bootanim
+
 # extra user init
 service userinit /data/local/userinit.rc
     user root
