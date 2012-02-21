@@ -61,7 +61,7 @@ if [ "$1" = '2' ]; then
         echo "/system		ext4		$ROM_SYSTEM_PART" >> /mbs/recovery/recovery.fstab
         echo $ROM_SYSTEM_PART > /mbs/stat/system_device
     else
-        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p10" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk1p1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/sys_img
@@ -79,7 +79,7 @@ if [ "$1" = '2' ]; then
         mkdir -p /data_dev
         ln -s /data_dev$ROM_DATA_PATH /data
     else
-        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p10" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/data_img
