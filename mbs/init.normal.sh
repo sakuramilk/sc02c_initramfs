@@ -4,6 +4,9 @@
 BUILD_TARGET=$1
 
 export MBS_LOG=/xdata/mbs4.log
+MBS_LOG_1=/xdata/mbs.old1.log
+MBS_LOG_2=/xdata/mbs.old2.log
+
 MBS_CONF="/xdata/mbs.conf"
 #ERR_MSG="/mbs/stat/err"
 ERR_MSG="/xdata/mbs.err"
@@ -367,6 +370,16 @@ func_make_init_rc()
 #==============================================================================
 mount -t ext4 /dev/block/mmcblk0p10 /xdata
 BOOT_DATE=`date`
+
+#log backup----------------
+if [ -f $MBS_LOG_1 ]; then
+	mv $MBS_LOG_1 $MBS_LOG_2
+fi
+if [ -f $MBS_LOG ]; then
+	mv $MBS_LOG $MBS_LOG_1
+fi
+#-------------------------
+
 echo "boot start : $BOOT_DATE" > $MBS_LOG
 
 if [ "$BUILD_TARGET" = '2' ]; then
