@@ -66,7 +66,7 @@ if [ "$1" = '2' ]; then
     # move errmsg
     mv /mbs/mnt/data/mbs.err /mbs/stat/
 
-    if [ ! -f $MBS_CONF ]; then
+    if [ ! -s $MBS_CONF ]; then
         func_make_conf
     fi
 
