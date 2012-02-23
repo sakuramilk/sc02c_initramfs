@@ -23,7 +23,7 @@ on init
     mkdir /system
     mkdir /data 0771 system system
     mkdir /cache 0770 system cache
-    mkdir /efs
+    #mkdir /efs
     mkdir /tmp
     mkdir /dbdata
 
@@ -52,10 +52,10 @@ on fs
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
-    mkdir /efs
-    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
-    chown radio system /efs
-    chmod 0771 /efs
+    #mkdir /efs
+    #mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
+    #chown radio system /efs
+    #chmod 0771 /efs
 
     # verfiy filesystem (UMS)
     exec apply_system_policy /dev/block/mmcblk0p11 vfat

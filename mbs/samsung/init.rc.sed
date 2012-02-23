@@ -252,6 +252,7 @@ on post-fs
     chown radio system /sys/class/sec/uart_switch/UART_SEL/value
     chmod 0664 /sys/class/sec/uart_switch/UART_SEL/value
 
+
 # create data/gps for GPS demon
     chown root system /dev/s3c2410_serial1
     chmod 0660 /dev/s3c2410_serial1
