@@ -200,8 +200,10 @@ func_get_mbs_info()
 	echo "KERNEL_PART=$KERNEL_PART" >> $MBS_LOG
 	echo "KERNEL_IMG=$KERNEL_IMG" >> $MBS_LOG
 
-	func_check_part $KERNEL_PART $KERNEL_IMG
-	sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
+	if [ ! -z $KERNEL_PART ];then
+		func_check_part $KERNEL_PART $KERNEL_IMG
+		sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
+	fi
 
 	echo "start of for" >> $MBS_LOG
 	for i in $LOOP_CNT; do
