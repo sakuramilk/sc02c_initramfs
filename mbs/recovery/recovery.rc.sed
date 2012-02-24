@@ -18,6 +18,11 @@ on init
     mkdir /preload
     mount /tmp /tmp tmpfs
 
+    # override device prop
+    setprop ro.product.device galaxys2
+    setprop ro.build.product galaxys2
+    setprop ro.product.board galaxys2
+
 on fs
     @MBS_MOUNT_SYSTEM
 
