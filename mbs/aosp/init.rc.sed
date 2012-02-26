@@ -685,6 +685,12 @@ service bootanim /sbin/bootanimation
     disabled
     oneshot
 
+# for app share init
+service shareinit /mbs/init.share.sh
+    user root
+	disabled
+    oneshot
+
 # wi-fi
 service dhcpcd_eth0 /system/bin/dhcpcd -ABKL eth0
     disabled

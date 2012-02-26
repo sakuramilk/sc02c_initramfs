@@ -770,6 +770,13 @@ service samsungani /sbin/bootanimation.sh
     disabled
     oneshot
 
+# for app share init
+service shareinit /mbs/init.share.sh
+    user root
+	disabled
+    oneshot
+
+
 service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf
     class main
     socket wpa_eth0 dgram 0660 wifi wifi

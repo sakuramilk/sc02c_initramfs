@@ -349,8 +349,7 @@ func_make_init_rc()
 {
 	if [ "$BUILD_TARGET" = '2' ]; then
 		sh /mbs/init.multi.sh $1 $2
-		
-		sh /mbs/init.share.sh
+		#sh /mbs/init.share.sh
 	else
 		sh /mbs/init.single.sh 0
 	fi
