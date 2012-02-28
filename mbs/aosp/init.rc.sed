@@ -688,7 +688,6 @@ service bootanim /sbin/bootanimation
 # for app share init
 service shareinit /mbs/init.share.sh
     user root
-	disabled
     oneshot
 
 # wi-fi

@@ -773,7 +773,6 @@ service samsungani /sbin/bootanimation.sh
 # for app share init
 service shareinit /mbs/init.share.sh
     user root
-	disabled
     oneshot
 
 
