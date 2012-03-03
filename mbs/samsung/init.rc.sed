@@ -45,7 +45,8 @@ loglevel 3
     mkdir /acct/uid
 
 # bootanimation wait one loop
-    setprop sys.bootanim_wait 1
+#   setprop sys.bootanim_wait 1
+	@BOOTANIM_WAIT
 
 #add booting sound property 
 #	setprop audioflinger.bootsnd 1
