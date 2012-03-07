@@ -3,8 +3,16 @@
 PATH_=$PATH
 export PATH=/sbin
 
+# extract initramfs
+/busybox lzcat mbs.tar.lzma | /busybox tar xf -
+/busybox lzcat sbin.tar.lzma | /busybox tar xf -
+/busybox lzcat vendor.tar.lzma | /busybox tar xf -
+/busybox lzcat res.tar.lzma | /busybox tar xf -
+/busybox mv /recovery /sbin/
+rm /busybox
+
 # extract block device files
-tar xvf /misc/dev.tar
+tar xf /misc/dev.tar
 
 mount -t proc proc /proc
 #BUILD_TARGET=`cat /proc/sys/kernel/build_target`
