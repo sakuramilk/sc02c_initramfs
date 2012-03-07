@@ -35,8 +35,12 @@ loglevel 3
 # but someday that may change.
     symlink /system/vendor /vendor
 
+# bootanimation wait one loop
+#   setprop sys.bootanim_wait 1
+	@BOOTANIM_WAIT
+
 #add booting sound property
-    setprop audioflinger.bootsnd 1
+#   setprop audioflinger.bootsnd 1
 
 # Create cgroup mount point for cpu accounting
     mkdir /acct
@@ -772,10 +776,10 @@ service media /system/bin/mediaserver
     group system audio camera inet net_bt net_bt_admin
     ioprio rt 4
 
-service samsungani /system/bin/samsungani
+service samsungani /sbin/bootanimation.sh
     class main
-    user graphics
-    group graphics
+    user @BOOTANI_UID
+    group @BOOTANI_UID
     disabled
     oneshot
 
@@ -911,3 +915,12 @@ service bugreport /system/bin/bugmailer.sh -v
 	disabled
 	oneshot
 	keycodes 114 115 116
+
+on property:sys.bootanim_completed=1
+    stop samsungani
+
+# extra user init
+service userinit /data/local/userinit.rc
+	class main
+    user root
+    oneshot
