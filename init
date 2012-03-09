@@ -27,17 +27,15 @@ mv /compress/e2fsck /sbin/
 mv /compress/sreadaheadd /sbin/
 
 mount -t proc proc /proc
-#BUILD_TARGET=`cat /proc/sys/kernel/build_target`
-BUILD_TARGET=2
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
 umount /proc
 
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
-  sh /mbs/init.recovery.sh $BUILD_TARGET
+  sh /mbs/init.recovery.sh
 else
   # normal mode
-  sh /mbs/init.normal.sh $BUILD_TARGET
+  sh /mbs/init.normal.sh
 fi
 
 # cleanup

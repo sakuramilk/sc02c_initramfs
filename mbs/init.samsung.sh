@@ -18,4 +18,4 @@ cp /mbs/samsung/ueventd.smdk4210.rc /
 cp /mbs/samsung/redbend_ua /sbin/
 
 # create init.rc
-sed -e "s/@BOOTANI_UID/$BOOTANI_UID/g" /mbs/samsung/init.rc.sed | sed -e "s/@BOOTANIM_WAIT/$BOOTANIM_WAIT/g" > /mbs/init.rc.temp
+sed -e "s/@BOOTANI_UID/$BOOTANI_UID/g" /mbs/samsung/init.rc.sed | sed -e "s/@BOOTANIM_WAIT/$BOOTANIM_WAIT/g" > /init.rc
