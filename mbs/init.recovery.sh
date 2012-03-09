@@ -1,5 +1,57 @@
 #!/sbin/busybox sh
 
+MBS_CONF=/mbs/mnt/data/mbs.conf
+MBS_CONF2=/mbs/mnt/data/mbs.conf.old
+
+#------------------------------------------------------
+#foce ROM0 boot setting
+#   $1 xxxx.part value
+#   $2 xxxx.img value
+#------------------------------------------------------
+func_make_conf()
+{
+    echo "mbs.boot.rom=0" > $MBS_CONF
+    echo "mbs.rom0.system.part=/dev/block/mmcblk0p9" >> $MBS_CONF
+    echo "mbs.rom0.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
+    echo "mbs.rom0.data.path=/data0" >> $MBS_CONF
+    echo "mbs.rom1.system.part=/dev/block/mmcblk0p12" >> $MBS_CONF
+    echo "mbs.rom1.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
+    echo "mbs.rom1.data.path=/data1" >> $MBS_CONF
+}
+#------------------------------------------------------
+#foce ROM0 boot setting
+#	$1: error msg
+#------------------------------------------------------
+func_error()
+{
+	mv $MBS_CONF $MBS_CONF2
+	func_make_conf
+}
+#------------------------------------------------------
+# check patation
+#   $1 xxxx.part value
+#   $2 xxxx.img value
+#------------------------------------------------------
+func_check_part()
+{
+	case $1 in
+		"/dev/block/mmcblk0p9"  )    return 0 ;;
+		"/dev/block/mmcblk0p10"  )    return 0 ;;
+		"/dev/block/mmcblk0p12" )    return 0 ;;
+		"/dev/block/mmcblk1p2"	 )    return 0 ;;
+		"/dev/block/mmcblk1p3"	 )    return 0 ;;
+		"/dev/block/mmcblk0p11" )    echo "vfat part" ;;
+		"/dev/block/mmcblk1p1"	 )    echo "vfat part" ;;
+	    *)       func_error "$1 is invalid part" ;;
+	esac
+
+	if [ -z $2 ]; then
+		func_error  "no img detect!"
+	fi
+	#echo "part is OK"
+	return 0
+}
+
 if [ "$1" = '2' ]; then
     # build target multi
     cp /mbs/recovery/recovery.multi /sbin/recovery
@@ -14,16 +66,8 @@ if [ "$1" = '2' ]; then
     # move errmsg
     mv /mbs/mnt/data/mbs.err /mbs/stat/
 
-    MBS_CONF=/mbs/mnt/data/mbs.conf
-
-    if [ ! -f $MBS_CONF ]; then
-        echo "mbs.boot.rom=0" > $MBS_CONF
-        echo "mbs.rom0.system.part=/dev/block/mmcblk0p9" >> $MBS_CONF
-        echo "mbs.rom0.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
-        echo "mbs.rom0.data.path=/data0" >> $MBS_CONF
-        echo "mbs.rom1.system.part=/dev/block/mmcblk0p12" >> $MBS_CONF
-        echo "mbs.rom1.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
-        echo "mbs.rom1.data.path=/data1" >> $MBS_CONF
+    if [ ! -s $MBS_CONF ]; then
+        func_make_conf
     fi
 
     ret=`grep mbs\.boot\.rom $MBS_CONF | cut -d'=' -f2`
@@ -40,6 +84,9 @@ if [ "$1" = '2' ]; then
     ROM_DATA_PATH=`grep mbs\.rom$ROM_ID\.data\.path $MBS_CONF | cut -d'=' -f2`
 
     umount /mbs/mnt/data
+
+	func_check_part $ROM_SYSTEM_PART $ROM_SYSTEM_IMG
+	func_check_part $ROM_DATA_PART $ROM_DATA_IMG
 
     # check error
     if [ -z "$ROM_SYSTEM_PART" ]; then
@@ -61,7 +108,7 @@ if [ "$1" = '2' ]; then
         echo "/system		ext4		$ROM_SYSTEM_PART" >> /mbs/recovery/recovery.fstab
         echo $ROM_SYSTEM_PART > /mbs/stat/system_device
     else
-        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p10" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk1p1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/sys_img
@@ -79,7 +126,7 @@ if [ "$1" = '2' ]; then
         mkdir -p /data_dev
         ln -s /data_dev$ROM_DATA_PATH /data
     else
-        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p10" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/data_img

@@ -25,6 +25,10 @@ on init
 
 on fs
     @MBS_MOUNT_SYSTEM
+    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
+
+    # verfiy filesystem (UMS)
+    exec apply_system_policy /dev/block/mmcblk0p11 vfat
 
 on boot
 

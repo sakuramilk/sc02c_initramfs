@@ -3,7 +3,7 @@
 #args 
 # $1 : rom_id
 
-MBS_LOG=/xdata/mbs_kernel.log
+MBS_LOG=/xdata/mbs4.log
 MBS_CONF="/xdata/mbs.conf"
 #ERR_MSG="/mbs/stat/err"
 ERR_MSG="/xdata/mbs.err"

@@ -4,6 +4,9 @@
 BUILD_TARGET=$1
 
 export MBS_LOG=/xdata/mbs4.log
+MBS_LOG_1=/xdata/mbs.old1.log
+MBS_LOG_2=/xdata/mbs.old2.log
+
 MBS_CONF="/xdata/mbs.conf"
 #ERR_MSG="/mbs/stat/err"
 ERR_MSG="/xdata/mbs.err"
@@ -197,8 +200,10 @@ func_get_mbs_info()
 	echo "KERNEL_PART=$KERNEL_PART" >> $MBS_LOG
 	echo "KERNEL_IMG=$KERNEL_IMG" >> $MBS_LOG
 
-	func_check_part $KERNEL_PART $KERNEL_IMG
-	sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
+	if [ ! -z $KERNEL_PART ];then
+		func_check_part $KERNEL_PART $KERNEL_IMG
+		sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
+	fi
 
 	echo "start of for" >> $MBS_LOG
 	for i in $LOOP_CNT; do
@@ -291,11 +296,12 @@ func_vender_init()
 	mnt_base=/mbs/mnt/rom${ROM_ID}
 	mnt_dir=$mnt_base/sys_dev
 	mnt_data=$mnt_base/data_dev
+	mnt_system=/mbs/mnt/system
 
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	mount -t ext4 $ROM_SYS_PART /mbs/mnt/system || func_error "$ROM_SYS_PART is invalid part"
+	mount -t ext4 $ROM_SYS_PART $mnt_system || func_error "$ROM_SYS_PART is invalid part"
 	mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
 	#temporary 
 	#make "data" dir is need to mount data patation.
@@ -306,7 +312,7 @@ func_vender_init()
 	chown system.system $BOOT_ROM_DATA_PATH
 
 	# android version code 9 or 10 is gingerbread, 14 or 15 is icecreamsandwitch
-	#SDK_VER=`grep ro\.build\.version\.sdk $ROM_SYS_PATH/build.prop | cut -d'=' -f2`
+	#SDK_VER=`grep ro\.build\.version\.sdk $mnt_system/build.prop | cut -d'=' -f2`
 	#if [ "$SDK_VER" = '14' -o "$SDK_VER" = '15' ]; then
 	#	ANDROID_VER=ics
 	#else
@@ -315,12 +321,12 @@ func_vender_init()
 
 	#sh /mbs/init.common.sh $ANDROID_VER
 
-	if [ -f /mbs/mnt/system/framework/twframework.jar ]; then
+	if [ -f $mnt_system/framework/twframework.jar ]; then
 		ROM_VENDOR=samsung
-		sh /mbs/init.samsung.sh /mbs/mnt/system $BOOT_ROM_DATA_PATH
+		sh /mbs/init.samsung.sh $mnt_system $BOOT_ROM_DATA_PATH
 	else
 		ROM_VENDOR=aosp
-		sh /mbs/init.aosp.sh /mbs/mnt/system $BOOT_ROM_DATA_PATH
+		sh /mbs/init.aosp.sh $mnt_system $BOOT_ROM_DATA_PATH
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	cp /mbs/init.rc.temp /xdata/init.rc.temp
@@ -328,7 +334,7 @@ func_vender_init()
 	# Set TweakGS2 properties
 	sh /mbs/init.tgs2.sh $BOOT_ROM_DATA_PATH
 
-	umount /mbs/mnt/system
+	umount $mnt_system
 	umount $mnt_data
 }
 
@@ -341,8 +347,7 @@ func_make_init_rc()
 {
 	if [ "$BUILD_TARGET" = '2' ]; then
 		sh /mbs/init.multi.sh $1 $2
-		
-		sh /mbs/init.share.sh
+		#sh /mbs/init.share.sh
 	else
 		sh /mbs/init.single.sh 0
 	fi
@@ -364,6 +369,16 @@ func_make_init_rc()
 #==============================================================================
 mount -t ext4 /dev/block/mmcblk0p10 /xdata
 BOOT_DATE=`date`
+
+#log backup----------------
+if [ -f $MBS_LOG_1 ]; then
+	mv $MBS_LOG_1 $MBS_LOG_2
+fi
+if [ -f $MBS_LOG ]; then
+	mv $MBS_LOG $MBS_LOG_1
+fi
+#-------------------------
+
 echo "boot start : $BOOT_DATE" > $MBS_LOG
 
 if [ "$BUILD_TARGET" = '2' ]; then
