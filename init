@@ -3,16 +3,28 @@
 PATH_=$PATH
 export PATH=/sbin
 
-# extract initramfs
-/busybox lzcat mbs.tar.lzma | /busybox tar xf -
-/busybox lzcat sbin.tar.lzma | /busybox tar xf -
-/busybox lzcat vendor.tar.lzma | /busybox tar xf -
-/busybox lzcat res.tar.lzma | /busybox tar xf -
-/busybox mv /recovery /sbin/
-rm /busybox
-
 # extract block device files
 tar xf /misc/dev.tar
+
+# extract initramfs
+lzcat mbs.tar.lzma | tar xf -
+lzcat vendor.tar.lzma | tar xf -
+lzcat res.tar.lzma | tar xf -
+lzcat compress.tar.lzma | tar xf -
+
+mv /compress/nandroid-md5.sh /sbin/
+mv /compress/bootanimation.sh /sbin/
+mv /compress/bootanimation /sbin/
+mv /compress/killrecovery.sh /sbin/
+mv /compress/fota.png /sbin/
+mv /compress/fix_permissions /sbin/
+mv /compress/sdparted /sbin/
+mv /compress/fat.format /sbin/
+mv /compress/adbd /sbin/
+mv /compress/tune2fs /sbin/
+mv /compress/parted /sbin/
+mv /compress/e2fsck /sbin/
+mv /compress/sreadaheadd /sbin/
 
 mount -t proc proc /proc
 #BUILD_TARGET=`cat /proc/sys/kernel/build_target`
@@ -29,7 +41,10 @@ else
 fi
 
 # cleanup
-rm -fr /dev/* /misc/dev.tar
+rm -rf /dev/* /misc/dev.tar
+rm -rf /compress
+rm /*.tar.lzma
+
 # init start
 mv /_init /init
 
