@@ -296,14 +296,12 @@ func_vender_init()
 	mnt_base=/mbs/mnt/rom${ROM_ID}
 	mnt_dir=$mnt_base/sys_dev
 	mnt_data=$mnt_base/data_dev
+	mnt_system=/mbs/mnt/system
 
 	eval export BOOT_ROM_DATA_PATH=$"ROM_DATA_PATH_"${ROM_ID}
 	eval ROM_DATA_PART=$"ROM_DATA_PART_"${ROM_ID}
 
-	mount -t ext4 $ROM_SYS_PART $ROM_SYS_PATH || func_error "$ROM_SYS_PART is invalid part"
-	if [ ! -d $ROM_SYS_PATH ];then
-		func_error "$ROM_SYS_PATH is invalid path"
-	fi
+	mount -t ext4 $ROM_SYS_PART $mnt_system || func_error "$ROM_SYS_PART is invalid part"
 	mount -t ext4 $ROM_DATA_PART $mnt_data || func_error "$ROM_DATA_PART is invalid part"
 	#temporary 
 	#make "data" dir is need to mount data patation.
@@ -314,7 +312,7 @@ func_vender_init()
 	chown system.system $BOOT_ROM_DATA_PATH
 
 	# android version code 9 or 10 is gingerbread, 14 or 15 is icecreamsandwitch
-	#SDK_VER=`grep ro\.build\.version\.sdk $ROM_SYS_PATH/build.prop | cut -d'=' -f2`
+	#SDK_VER=`grep ro\.build\.version\.sdk $mnt_system/build.prop | cut -d'=' -f2`
 	#if [ "$SDK_VER" = '14' -o "$SDK_VER" = '15' ]; then
 	#	ANDROID_VER=ics
 	#else
@@ -323,12 +321,12 @@ func_vender_init()
 
 	#sh /mbs/init.common.sh $ANDROID_VER
 
-	if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
+	if [ -f $mnt_system/framework/twframework.jar ]; then
 		ROM_VENDOR=samsung
-		sh /mbs/init.samsung.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH
+		sh /mbs/init.samsung.sh $mnt_system $BOOT_ROM_DATA_PATH
 	else
 		ROM_VENDOR=aosp
-		sh /mbs/init.aosp.sh $ROM_SYS_PATH $BOOT_ROM_DATA_PATH
+		sh /mbs/init.aosp.sh $mnt_system $BOOT_ROM_DATA_PATH
 	fi
 	echo ROM_VENDOR=$ROM_VENDOR >> $MBS_LOG
 	cp /mbs/init.rc.temp /xdata/init.rc.temp
@@ -336,7 +334,7 @@ func_vender_init()
 	# Set TweakGS2 properties
 	sh /mbs/init.tgs2.sh $BOOT_ROM_DATA_PATH
 
-	umount $ROM_SYS_PATH
+	umount $mnt_system
 	umount $mnt_data
 }
 
