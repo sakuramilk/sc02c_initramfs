@@ -60,12 +60,17 @@ func_compare_current_md5()
 KERNEL_PART=$1
 KERNEL_IMG=$2
 #for Debug
-echo KERNEL_PART=$KERNEL_PART > $MBS_LOG
+echo KERNEL_PART=$KERNEL_PART >> $MBS_LOG
 echo KERNEL_IMG=$KERNEL_IMG >> $MBS_LOG
 
 mnt_base=/mbs/mnt/kernel
 
 if [ -n "$KERNEL_PART" ]; then
+	if [ "$KERNEL_PART" = '/dev/block/mmcblk0p5' ]; then
+		echo "use current kernel" >> $MBS_LOG
+		exit 0
+	fi
+
 	if [ -n "$KERNEL_IMG" ]; then
 		mount -t ext4 $KERNEL_PART $mnt_base || func_error "$KERNEL_PART is invalid part"
 	

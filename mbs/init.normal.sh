@@ -160,6 +160,7 @@ func_mbs_create_loop_dev()
 func_check_part()
 {
 	case $1 in
+		"/dev/block/mmcblk0p5"  )    return 0 ;;
 		"/dev/block/mmcblk0p9"  )    return 0 ;;
 		"/dev/block/mmcblk0p10"  )    return 0 ;;
 		"/dev/block/mmcblk0p12" )    return 0 ;;
@@ -196,10 +197,6 @@ func_get_mbs_info()
 	# check kernel
 	KERNEL_PART=`grep mbs\.rom$ROM_ID\.kernel\.part $MBS_CONF | cut -d'=' -f2`
 	KERNEL_IMG=`grep mbs\.rom$ROM_ID\.kernel\.img $MBS_CONF | cut -d'=' -f2`
-
-	echo "KERNEL_PART=$KERNEL_PART" >> $MBS_LOG
-	echo "KERNEL_IMG=$KERNEL_IMG" >> $MBS_LOG
-
 	if [ ! -z $KERNEL_PART ];then
 		func_check_part $KERNEL_PART $KERNEL_IMG
 		sh /mbs/init.kernel.sh $KERNEL_PART $KERNEL_IMG
