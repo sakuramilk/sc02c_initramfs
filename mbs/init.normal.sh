@@ -104,7 +104,7 @@ func_mbs_create_loop_dev()
 	dev=`echo  $arg_img_part | grep -o /dev/block/mmcblk.`
 
 
-	if [ "$arg_img_part" = "$DEV_BLOCK_SDCARD" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
+	if [ "$arg_img_part" = "$DEV_BLOCK_SDCARD" ] || [ "$arg_img_part" = "$DEV_BLOCK_EMMC1" ]; then
 			fotmat=vfat
 	fi
 #format auto detect... dose not works..
@@ -155,10 +155,10 @@ func_check_part()
 		"$DEV_BLOCK_FACTORYFS" )    return 0 ;;
 		"$DEV_BLOCK_DATA"      )    return 0 ;;
 		"$DEV_BLOCK_HIDDEN"    )    return 0 ;;
-		"$DEV_BLOCK_EMMC2"	  )    return 0 ;;
-		"$DEV_BLOCK_EMMC3"	  )    return 0 ;;
+		"$DEV_BLOCK_EMMC2"     )    return 0 ;;
+		"$DEV_BLOCK_EMMC3"     )    return 0 ;;
 		"$DEV_BLOCK_SDCARD"    )    echo "vfat part" ;;
-		"$DEV_BLOCK_EMMC1"	  )    echo "vfat part" ;;
+		"$DEV_BLOCK_EMMC1"     )    echo "vfat part" ;;
 	    *)       func_error "$1 is invalid part" ;;
 	esac
 
