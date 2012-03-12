@@ -1,12 +1,5 @@
 #!/sbin/busybox sh
 
-#args 
-# $1 : rom_id
-
-MBS_LOG=/xdata/mbs4.log
-MBS_CONF="/xdata/mbs.conf"
-#ERR_MSG="/mbs/stat/err"
-ERR_MSG="/xdata/mbs.err"
 export RET=""
 
 #note)script process is "main process" is 1st
@@ -16,9 +9,7 @@ export RET=""
 #------------------------------------------------------
 func_error()
 {
-	echo $1 >> $MBS_LOG
-	echo $1 > $ERR_MSG
-	reboot recovery
+	sh err_reboot.sh $1
 }
 
 #------------------------------------------------------
@@ -35,7 +26,7 @@ func_compare_current_md5()
 	# current kernel md5 checksum
 	size=`stat -t $1 | cut -d ' ' -f2`
 	echo size=$size >> $MBS_LOG
-	dd if=/dev/block/mmcblk0p5 of=/tmp/zImage ibs=1 count=$size
+	dd if=$DEV_BLOCK_ZIMAGE of=/tmp/zImage ibs=1 count=$size
 	curr_md5=`md5sum /tmp/zImage | cut -d ' ' -f1`
 	# select kernel md5 checksum
 	sel_md5=`md5sum $1 | cut -d ' ' -f1`
@@ -44,7 +35,7 @@ func_compare_current_md5()
 	echo curr_md5=$curr_md5 >> $MBS_LOG
 	echo sel_md5=$sel_md5 >> $MBS_LOG
 	if [ ! "$curr_md5" = "$sel_md5" ]; then
-		cat $1 > /dev/block/mmcblk0p5
+		cat $1 > $DEV_BLOCK_ZIMAGE
 		sync
 		sync
 		sync
@@ -66,7 +57,7 @@ echo KERNEL_IMG=$KERNEL_IMG >> $MBS_LOG
 mnt_base=/mbs/mnt/kernel
 
 if [ -n "$KERNEL_PART" ]; then
-	if [ "$KERNEL_PART" = '/dev/block/mmcblk0p5' ]; then
+	if [ "$KERNEL_PART" = "$DEV_BLOCK_ZIMAGE" ]; then
 		echo "use current kernel" >> $MBS_LOG
 		exit 0
 	fi
