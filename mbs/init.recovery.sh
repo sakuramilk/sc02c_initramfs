@@ -1,8 +1,5 @@
 #!/sbin/busybox sh
 
-MBS_CONF=/mbs/mnt/data/mbs.conf
-MBS_CONF2=/mbs/mnt/data/mbs.conf.old
-
 #------------------------------------------------------
 #foce ROM0 boot setting
 #   $1 xxxx.part value
@@ -11,11 +8,11 @@ MBS_CONF2=/mbs/mnt/data/mbs.conf.old
 func_make_conf()
 {
     echo "mbs.boot.rom=0" > $MBS_CONF
-    echo "mbs.rom0.system.part=/dev/block/mmcblk0p9" >> $MBS_CONF
-    echo "mbs.rom0.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
+    echo "mbs.rom0.system.part=$DEV_BLOCK_FACTORYFS" >> $MBS_CONF
+    echo "mbs.rom0.data.part=$DEV_BLOCK_DATA" >> $MBS_CONF
     echo "mbs.rom0.data.path=/data0" >> $MBS_CONF
-    echo "mbs.rom1.system.part=/dev/block/mmcblk0p12" >> $MBS_CONF
-    echo "mbs.rom1.data.part=/dev/block/mmcblk0p10" >> $MBS_CONF
+    echo "mbs.rom1.system.part=/$DEV_BLOCK_HIDDEN" >> $MBS_CONF
+    echo "mbs.rom1.data.part=$DEV_BLOCK_DATA" >> $MBS_CONF
     echo "mbs.rom1.data.path=/data1" >> $MBS_CONF
 }
 #------------------------------------------------------
@@ -24,7 +21,7 @@ func_make_conf()
 #------------------------------------------------------
 func_error()
 {
-	mv $MBS_CONF $MBS_CONF2
+	mv $MBS_CONF $MBS_CONF.old
 	func_make_conf
 }
 #------------------------------------------------------
@@ -35,13 +32,14 @@ func_error()
 func_check_part()
 {
 	case $1 in
-		"/dev/block/mmcblk0p9"  )    return 0 ;;
-		"/dev/block/mmcblk0p10"  )    return 0 ;;
-		"/dev/block/mmcblk0p12" )    return 0 ;;
-		"/dev/block/mmcblk1p2"	 )    return 0 ;;
-		"/dev/block/mmcblk1p3"	 )    return 0 ;;
-		"/dev/block/mmcblk0p11" )    echo "vfat part" ;;
-		"/dev/block/mmcblk1p1"	 )    echo "vfat part" ;;
+		"$DEV_BLOCK_ZIMAGE"    )    return 0 ;;
+		"$DEV_BLOCK_FACTORYFS" )    return 0 ;;
+		"$DEV_BLOCK_DATA"      )    return 0 ;;
+		"$DEV_BLOCK_HIDDEN"    )    return 0 ;;
+		"$DEV_BLOCK_EMMC2"     )    return 0 ;;
+		"$DEV_BLOCK_EMMC3"     )    return 0 ;;
+		"$DEV_BLOCK_SDCARD"    )    echo "vfat part" ;;
+		"$DEV_BLOCK_EMMC1"     )    echo "vfat part" ;;
 	    *)       func_error "$1 is invalid part" ;;
 	esac
 
@@ -61,7 +59,7 @@ if [ "$1" = '2' ]; then
 
     # parse mbs.conf
     mkdir -p /mbs/mnt/data
-    mount -t ext4 /dev/block/mmcblk0p10 /mbs/mnt/data
+    mount -t ext4 $DEV_BLOCK_DATA /mbs/mnt/data
 
     # move errmsg
     mv /mbs/mnt/data/mbs.err /mbs/stat/
@@ -90,17 +88,17 @@ if [ "$1" = '2' ]; then
 
     # check error
     if [ -z "$ROM_SYSTEM_PART" ]; then
-        ROM_SYSTEM_PART="/dev/block/mmcblk0p9"
+        ROM_SYSTEM_PART="$DEV_BLOCK_FACTORYFS"
         ROM_SYSTEM_IMG=""
     fi
     if [ -z "$ROM_DATA_PART" ]; then
-        ROM_DATA_PART="/dev/block/mmcblk0p10"
+        ROM_DATA_PART="$DEV_BLOCK_DATA"
         ROM_DATA_IMG=""
     fi
 
     # create fstab
     PARTITION_FORMAT=ext4
-    echo "/xdata		ext4		/dev/block/mmcblk0p10" >> /mbs/recovery/recovery.fstab
+    echo "/xdata		ext4		$DEV_BLOCK_DATA" >> /mbs/recovery/recovery.fstab
     if [ -z "$ROM_SYSTEM_IMG" ]; then
         MBS_MOUNT_SYSTEM=`echo $ROM_SYSTEM_PART | sed -e "s/\//\\\\\\\\\//g"`
         sed -e "s/@MBS_MOUNT_SYSTEM/mount ext4 $MBS_MOUNT_SYSTEM \/system wait rw/g" /mbs/recovery/recovery.rc.sed > /recovery.rc
@@ -108,7 +106,7 @@ if [ "$1" = '2' ]; then
         echo "/system		ext4		$ROM_SYSTEM_PART" >> /mbs/recovery/recovery.fstab
         echo $ROM_SYSTEM_PART > /mbs/stat/system_device
     else
-        if [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_SYSTEM_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_SYSTEM_PART" = "$DEV_BLOCK_SDCARD" ] || [ "$ROM_SYSTEM_PART" = "$DEV_BLOCK_EMMC1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/sys_img
@@ -126,7 +124,7 @@ if [ "$1" = '2' ]; then
         mkdir -p /data_dev
         ln -s /data_dev$ROM_DATA_PATH /data
     else
-        if [ "$ROM_DATA_PART" = "/dev/block/mmcblk0p11" ] || [ "$ROM_DATA_PART" = "/dev/block/mmcblk1p1" ]; then
+        if [ "$ROM_DATA_PART" = "$DEV_BLOCK_SDCARD" ] || [ "$ROM_DATA_PART" = "$DEV_BLOCK_EMMC1" ]; then
             PARTITION_FORMAT=vfat
         fi
         mkdir -p /mbs/mnt/data_img
@@ -148,8 +146,8 @@ else
     sed -e "s/@MBS_MOUNT_SYSTEM/mount ext4 \/dev\/block\/mmcblk0p9 \/system wait rw/g" /mbs/recovery/recovery.rc.sed > /recovery.rc
 
     # create fstab
-    echo "/system		ext4		/dev/block/mmcblk0p9" >> /mbs/recovery/recovery.fstab
-    echo "/data		ext4		/dev/block/mmcblk0p10" >> /mbs/recovery/recovery.fstab
+    echo "/system		ext4		$DEV_BLOCK_FACTORYFS" >> /mbs/recovery/recovery.fstab
+    echo "/data		ext4		$DEV_BLOCK_DATA" >> /mbs/recovery/recovery.fstab
 fi
 
 cp /mbs/recovery/recovery.fstab /misc/

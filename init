@@ -1,15 +1,34 @@
 #!/sbin/busybox sh
 
+# setup env
+export DEV_BLOCK_ZIMAGE=/dev/block/mmcblk0p5
+export DEV_BLOCK_RECOVERY=/dev/block/mmcblk0p6
+export DEV_BLOCK_CACHE=/dev/block/mmcblk0p7
+export DEV_BLOCK_FACTORYFS=/dev/block/mmcblk0p9
+export DEV_BLOCK_DATA=/dev/block/mmcblk0p10
+export DEV_BLOCK_SDCARD=/dev/block/mmcblk0p11
+export DEV_BLOCK_HIDDEN=/dev/block/mmcblk0p12
+export DEV_BLOCK_EMMC1=/dev/block/mmcblk1p1
+export DEV_BLOCK_EMMC2=/dev/block/mmcblk1p2
+export DEV_BLOCK_EMMC3=/dev/block/mmcblk1p3
+
+export MBS_LOG=/xdata/mbs4.log
+export MBS_CONF="/xdata/mbs.conf"
+export ERR_MSG="/xdata/mbs.err"
+
+
 PATH_=$PATH
 export PATH=/sbin
 
 # extract block device files
-tar xvf /misc/dev.tar
+tar xf /misc/dev.tar
 
 mount -t proc proc /proc
 BUILD_TARGET=`cat /proc/sys/kernel/build_target`
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
 umount /proc
+
+mount -t ext4 $DEV_BLOCK_DATA /xdata
 
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
@@ -19,8 +38,10 @@ else
   sh /mbs/init.normal.sh $BUILD_TARGET
 fi
 
+umount /xdata
+
 # cleanup
-rm -fr /dev/* /misc/dev.tar
+rm -rf /dev/* /misc/dev.tar
 # init start
 mv /_init /init
 

@@ -2,10 +2,7 @@
 
 #set feature_aosp
 mount -t proc proc /proc
-mount -t sysfs sysfs /sys
 echo 1 > /proc/sys/kernel/feature_aosp
-echo 1 > /sys/devices/virtual/misc/bt_lpm/bt_mode
-umount /sys
 umount /proc
 
 # copy rc files

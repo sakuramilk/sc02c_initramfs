@@ -3,13 +3,9 @@
 #set config
 BUILD_TARGET=$1
 
-export MBS_LOG=/xdata/mbs4.log
 MBS_LOG_1=/xdata/mbs.old1.log
 MBS_LOG_2=/xdata/mbs.old2.log
 
-MBS_CONF="/xdata/mbs.conf"
-#ERR_MSG="/mbs/stat/err"
-ERR_MSG="/xdata/mbs.err"
 LOOP_CNT="0 1 2 3 4 5 6 7"
 export RET=""
 
@@ -21,12 +17,7 @@ export RET=""
 #------------------------------------------------------
 func_error()
 {
-	echo $1 >> $MBS_LOG
-	echo $1 > $ERR_MSG
-        sync
-        sync
-        sync
-	reboot recovery
+	sh err_reboot.sh $1
 }
 
 #------------------------------------------------------
@@ -67,12 +58,12 @@ func_mbs_init()
 func_mbs_foce_pramary()
 {
 	export ROM_ID=0
-	export ROM_DATA_PART_0=/dev/block/mmcblk0p10
+	export ROM_DATA_PART_0=$DEV_BLOCK_DATA
 	export ROM_DATA_IMG_0=""
 	#wraning last "/" is not need
 	export ROM_DATA_PATH_0=/mbs/mnt/rom0/data_dev$1
 
-	export ROM_SYS_PART=/dev/block/mmcblk0p9
+	export ROM_SYS_PART=$DEV_BLOCK_FACTORYFS
 	export ROM_SYS_IMG=""
 	#wraning last "/" is not need
 	#export ROM_SYS_PATH=/mbs/mnt/rom0/sys_dev
@@ -113,14 +104,14 @@ func_mbs_create_loop_dev()
 	dev=`echo  $arg_img_part | grep -o /dev/block/mmcblk.`
 
 
-	if [ "$arg_img_part" = "/dev/block/mmcblk0p11" ] || [ "$arg_img_part" = "/dev/block/mmcblk1p1" ]; then
+	if [ "$arg_img_part" = "$DEV_BLOCK_SDCARD" ] || [ "$arg_img_part" = "$DEV_BLOCK_EMMC1" ]; then
 			fotmat=vfat
 	fi
 #format auto detect... dose not works..
 #	echo dev=$dev >> $MBS_LOG
 #	if [ "$dev" = "/dev/block/mmcblk0" ]; then
 #		
-#		if [ "$arg_img_part" = "/dev/block/mmcblk0p10" ]; then
+#		if [ "$arg_img_part" = "$DEV_BLOCK_DATA" ]; then
 #			fotmat="vfat"
 #		fi
 #	else
@@ -160,14 +151,14 @@ func_mbs_create_loop_dev()
 func_check_part()
 {
 	case $1 in
-		"/dev/block/mmcblk0p5"  )    return 0 ;;
-		"/dev/block/mmcblk0p9"  )    return 0 ;;
-		"/dev/block/mmcblk0p10"  )    return 0 ;;
-		"/dev/block/mmcblk0p12" )    return 0 ;;
-		"/dev/block/mmcblk1p2"	 )    return 0 ;;
-		"/dev/block/mmcblk1p3"	 )    return 0 ;;
-		"/dev/block/mmcblk0p11" )    echo "vfat part" ;;
-		"/dev/block/mmcblk1p1"	 )    echo "vfat part" ;;
+		"$DEV_BLOCK_ZIMAGE"    )    return 0 ;;
+		"$DEV_BLOCK_FACTORYFS" )    return 0 ;;
+		"$DEV_BLOCK_DATA"      )    return 0 ;;
+		"$DEV_BLOCK_HIDDEN"    )    return 0 ;;
+		"$DEV_BLOCK_EMMC2"     )    return 0 ;;
+		"$DEV_BLOCK_EMMC3"     )    return 0 ;;
+		"$DEV_BLOCK_SDCARD"    )    echo "vfat part" ;;
+		"$DEV_BLOCK_EMMC1"     )    echo "vfat part" ;;
 	    *)       func_error "$1 is invalid part" ;;
 	esac
 
@@ -352,8 +343,6 @@ func_make_init_rc()
 	cp /init.rc /xdata/init.rc
 
 	echo end of init >> $MBS_LOG
-	umount /xdata
-
 
 	#mbs dir remove,if single boot 
 	if [ "$BUILD_TARGET" != '2' ]; then
@@ -364,7 +353,6 @@ func_make_init_rc()
 #==============================================================================
 # main process
 #==============================================================================
-mount -t ext4 /dev/block/mmcblk0p10 /xdata
 BOOT_DATE=`date`
 
 #log backup----------------
