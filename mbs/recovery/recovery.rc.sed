@@ -64,9 +64,12 @@ service adbd /sbin/adbd recovery
 # Always start adbd on userdebug and eng builds
 on property:ro.debuggable=1
     write /sys/class/android_usb/android0/enable 0
+#    write /sys/class/android_usb/android0/idVendor 04e8
+#    write /sys/class/android_usb/android0/idProduct 6860
+#    write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/idVendor 04e8
-    write /sys/class/android_usb/android0/idProduct 6860
-    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/idProduct 685e
+    write /sys/class/android_usb/android0/functions mass_storage,adb
     write /sys/class/android_usb/android0/enable 1
     write /sys/class/android_usb/android0/iManufacturer $ro.product.manufacturer
     write /sys/class/android_usb/android0/iProduct $ro.product.model
