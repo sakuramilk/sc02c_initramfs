@@ -56,12 +56,7 @@ echo KERNEL_IMG=$KERNEL_IMG >> $MBS_LOG
 
 mnt_base=/mbs/mnt/kernel
 
-if [ -n "$KERNEL_PART" ]; then
-	if [ "$KERNEL_PART" = "$DEV_BLOCK_ZIMAGE" ]; then
-		echo "use current kernel" >> $MBS_LOG
-		exit 0
-	fi
-
+if [ -n "$KERNEL_PART" ] && [ "$KERNEL_PART" != "$DEV_BLOCK_ZIMAGE" ]; then
 	if [ -n "$KERNEL_IMG" ]; then
 		mount -t ext4 $KERNEL_PART $mnt_base || func_error "$KERNEL_PART is invalid part"
 	
@@ -72,8 +67,6 @@ if [ -n "$KERNEL_PART" ]; then
 		fi
 
 		umount $mnt_base
-	else
-		func_error "$mnt_base$KERNEL_IMG is not exist"
 	fi
 fi
 
