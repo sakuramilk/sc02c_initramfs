@@ -6,26 +6,6 @@ export PATH=/sbin
 # extract block device files
 tar xf /misc/dev.tar
 
-# extract initramfs
-lzcat mbs.tar.lzma | tar xf -
-lzcat vendor.tar.lzma | tar xf -
-lzcat res.tar.lzma | tar xf -
-lzcat compress.tar.lzma | tar xf -
-
-mv /compress/nandroid-md5.sh /sbin/
-mv /compress/bootanimation.sh /sbin/
-mv /compress/bootanimation /sbin/
-mv /compress/killrecovery.sh /sbin/
-mv /compress/fota.png /sbin/
-mv /compress/fix_permissions /sbin/
-mv /compress/sdparted /sbin/
-mv /compress/fat.format /sbin/
-mv /compress/adbd /sbin/
-mv /compress/tune2fs /sbin/
-mv /compress/parted /sbin/
-mv /compress/e2fsck /sbin/
-mv /compress/sreadaheadd /sbin/
-
 mount -t proc proc /proc
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
 umount /proc
@@ -40,8 +20,6 @@ fi
 
 # cleanup
 rm -rf /dev/* /misc/dev.tar
-rm -rf /compress
-rm /*.tar.lzma
 
 # init start
 mv /_init /init
