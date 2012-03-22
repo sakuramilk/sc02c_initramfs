@@ -533,6 +533,16 @@ on property:service.adb.tcp.port=-1
 on property:sys.bootanim_completed=1
     stop bootanim
 
+# TweakGS2 extention properties
+on property:persist.tgs2.logger=1
+    insmod /lib/modules/logger.ko
+
+on property:persist.tgs2.cifs=1
+    insmod /lib/modules/cifs.ko
+
+on property:persist.tgs2.ntfs=1
+    insmod /lib/modules/ntfs.ko
+
 # extra user init
 service userinit /data/local/userinit.rc
     user root
