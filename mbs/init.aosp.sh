@@ -6,6 +6,7 @@ echo 1 > /proc/sys/kernel/feature_aosp
 umount /proc
 
 # copy rc files
+cp /mbs/aosp/default.prop /
 cp /mbs/aosp/init.smdk4210.rc /
 cp /mbs/aosp/init.smdk4210.usb.rc /
 cp /mbs/aosp/ueventd.rc /
