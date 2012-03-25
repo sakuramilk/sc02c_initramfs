@@ -11,6 +11,7 @@ else
 fi
 
 # copy rc files
+cp /mbs/samsung/default.prop /
 cp /mbs/samsung/init.smdk4210.rc /
 cp /mbs/samsung/init.smdk4210.usb.rc /
 cp /mbs/samsung/ueventd.rc /

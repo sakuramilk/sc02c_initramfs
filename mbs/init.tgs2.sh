@@ -2,6 +2,13 @@
 
 PROP_PATH=$1/tweakgs2.prop
 
+USB_CONFIG=`grep persist\.sys\.usb\.config $PROP_PATH | cut -d'=' -f2`
+if [ -n "$USB_CONFIG" ]; then
+  echo persist.sys.usb.config=$USB_CONFIG >> /default.prop
+else
+  echo persist.sys.usb.config=mtp,adb >> /default.prop
+fi
+
 BOOT_SND=`grep audioflinger\.bootsnd $PROP_PATH | cut -d'=' -f2`
 if [ "$BOOT_SND" = '1' ]; then
   echo audioflinger.bootsnd=1 >> /default.prop
