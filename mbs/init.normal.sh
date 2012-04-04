@@ -8,7 +8,11 @@ mount -t ext4 /dev/block/mmcblk0p10 $ROM_DATA_PATH
 
 # check rom vendor
 if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
-    sh /mbs/init.samsung.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    if [ -f $ROM_SYS_PATH/framework/framework-miui.jar ]; then
+        sh /mbs/init.miui.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    else
+        sh /mbs/init.samsung.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    fi
 else
     sh /mbs/init.aosp.sh $ROM_SYS_PATH $ROM_DATA_PATH
 fi
