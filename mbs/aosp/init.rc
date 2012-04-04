@@ -539,5 +539,6 @@ on property:persist.tgs2.ntfs=1
 
 # extra user init
 service userinit /data/local/userinit.rc
+    class main
     user root
     oneshot
