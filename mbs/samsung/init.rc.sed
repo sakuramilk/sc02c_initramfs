@@ -585,10 +585,6 @@ on boot
     chmod 0770 /system/bin/rtc_log.sh
     chown system system /system/bin/rtc_log.sh
 
-# DVFS - limit cpufreq during booting sequence
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 1000000
-
 # Set this property so surfaceflinger is not started by system_init
     setprop system_init.startsurfaceflinger 0
 
