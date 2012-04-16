@@ -20,4 +20,5 @@ cp /mbs/miui/redbend_ua /sbin/
 cp /mbs/miui/lpm.rc /
 
 # create init.rc
-sed -e "s/@BOOTANI_UID/$BOOTANI_UID/g" /mbs/miui/init.rc.sed | sed -e "s/@BOOTANIM_WAIT/$BOOTANIM_WAIT/g" > /init.rc
+#sed -e "s/@BOOTANI_UID/$BOOTANI_UID/g" /mbs/miui/init.rc.sed | sed -e "s/@BOOTANIM_WAIT/$BOOTANIM_WAIT/g" > /init.rc
+sed -e "s/@BOOTANI_UID/$BOOTANI_UID/g" /mbs/miui/init.rc.sed | sed -e "s/@BOOTANIM_WAIT/$BOOTANIM_WAIT/g" > /mbs/init.rc.temp

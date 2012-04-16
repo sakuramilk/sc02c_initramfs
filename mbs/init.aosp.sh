@@ -9,4 +9,5 @@ cp /mbs/aosp/ueventd.smdk4210.rc /
 cp /mbs/aosp/lpm.rc /
 
 # create init.rc
-cp /mbs/aosp/init.rc /
+#cp /mbs/aosp/init.rc /
+cp /mbs/aosp/init.rc.sed /mbs/init.rc.temp
