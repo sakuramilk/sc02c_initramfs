@@ -1,0 +1,9 @@
+#!/sbin/busybox sh
+
+if [ ! -z $1 ]; then
+	MBS_CONF=/xdata/mbs.conf
+
+	if [ -f $MBS_CONF ]; then
+		sed -i s/mbs\.boot\.rom=.*/mbs\.boot\.rom=$1/g $MBS_CONF
+	fi
+fi
