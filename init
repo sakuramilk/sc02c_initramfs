@@ -32,7 +32,8 @@ mount -t ext4 $DEV_BLOCK_DATA /xdata
 
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
-  sh /mbs/init.recovery.sh
+  #sh /mbs/init.recovery.sh
+  sh /mbs/init.recovery_mbs.sh '2'
 else
   # normal mode
   #sh /mbs/init.normal.sh

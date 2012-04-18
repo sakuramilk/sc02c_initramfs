@@ -1,8 +1,5 @@
 #!/sbin/busybox sh
 
-MBS_CONF=/mbs/mnt/data/mbs.conf
-MBS_CONF2=/mbs/mnt/data/mbs.conf.old
-
 #------------------------------------------------------
 #foce ROM0 boot setting
 #   $1 xxxx.part value
@@ -24,7 +21,7 @@ func_make_conf()
 #------------------------------------------------------
 func_error()
 {
-	mv $MBS_CONF $MBS_CONF2
+	mv $MBS_CONF $MBS_CONF.old
 	func_make_conf
 }
 #------------------------------------------------------
