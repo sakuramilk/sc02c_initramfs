@@ -539,7 +539,7 @@ on property:persist.tgs2.ntfs=1
 
 # extra init
 service initpost /sbin/initpost.sh	
-    class main
+    class core
     user root
     oneshot
 
