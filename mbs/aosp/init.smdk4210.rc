@@ -32,6 +32,17 @@ on early-init
 on fs
 # mount ext4 partitions
     mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
+
+# for CM9 modules
+    mount tmpfs tmpfs /system/lib/modules
+    symlink /lib/modules/cifs.ko /system/lib/modules/cifs.ko
+    symlink /lib/modules/dhd.ko /system/lib/modules/dhd.ko
+    symlink /lib/modules/j4fs.ko /system/lib/modules/j4fs.ko
+    symlink /lib/modules/logger.ko /system/lib/modules/logger.ko
+    symlink /lib/modules/ntfs.ko /system/lib/modules/ntfs.ko
+    symlink /lib/modules/scsi_wait_scan.ko /system/lib/modules/scsi_wait_scan.ko
+# end for CM9 modules
+
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
     mount ext4 /dev/block/mmcblk0p12 /preload nosuid nodev noatime wait
