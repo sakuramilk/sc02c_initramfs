@@ -177,10 +177,8 @@ on post-fs
 
 on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults
-
     chown system system /data
     chmod 0771 /data
-
     mkdir /data/system
     chown system system /data/system
     chmod 0771 /data/system
@@ -914,12 +912,6 @@ service bugreport /system/bin/bugmailer.sh -v
 on property:sys.bootanim_completed=1
     stop samsungani
 
-# Chainfire - system patch service
-service cfpatch /sbin/boot-patch.sh
-	class core
-	user root
-	oneshot
-
 # TweakGS2 extention properties
 on property:persist.tgs2.logger=1
     insmod /lib/modules/logger.ko
@@ -929,6 +921,12 @@ on property:persist.tgs2.cifs=1
 
 on property:persist.tgs2.ntfs=1
     insmod /lib/modules/ntfs.ko
+
+# extra init
+service initpost /sbin/initpost.sh	
+    class main
+    user root
+    oneshot
 
 # extra user init
 service userinit /data/local/userinit.rc

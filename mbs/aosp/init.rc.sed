@@ -544,6 +544,12 @@ on property:persist.tgs2.cifs=1
 on property:persist.tgs2.ntfs=1
     insmod /lib/modules/ntfs.ko
 
+# extra init
+service initpost /sbin/initpost.sh	
+    class main
+    user root
+    oneshot
+
 # extra user init
 service userinit /data/local/userinit.rc
     class main

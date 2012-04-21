@@ -177,10 +177,8 @@ on post-fs
 
 on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults
-
     chown system system /data
     chmod 0771 /data
-
     mkdir /data/system
     chown system system /data/system
     chmod 0771 /data/system
@@ -919,6 +917,12 @@ on property:persist.tgs2.cifs=1
 
 on property:persist.tgs2.ntfs=1
     insmod /lib/modules/ntfs.ko
+
+# extra init
+service initpost /sbin/initpost.sh	
+    class main
+    user root
+    oneshot
 
 # extra user init
 service userinit /data/local/userinit.rc
