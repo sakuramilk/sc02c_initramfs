@@ -586,8 +586,8 @@ on boot
     chown system system /system/bin/rtc_log.sh
 
 # DVFS - limit cpufreq during booting sequence
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 1000000
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor userspace
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 1000000
 
 # Set this property so surfaceflinger is not started by system_init
     setprop system_init.startsurfaceflinger 0
@@ -895,10 +895,10 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
     oneshot
 
 # DVFS - limit cpufreq during booting sequence
-service dvfs /system/bin/sh /system/bin/dvfs.sh
-    class main
-    user root
-    oneshot
+#service dvfs /system/bin/sh /system/bin/dvfs.sh
+#    class main
+#    user root
+#    oneshot
     
 # 2011-12-08/systemsw/kyo/ bugreport is triggered by holding down volume down, volume up and power
 service bugreport /system/bin/bugmailer.sh -v
