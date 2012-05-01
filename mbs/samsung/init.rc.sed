@@ -891,10 +891,10 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
     oneshot
 
 # DVFS - limit cpufreq during booting sequence
-service dvfs /system/bin/sh /system/bin/dvfs.sh
-    class main
-    user root
-    oneshot
+#service dvfs /system/bin/sh /system/bin/dvfs.sh
+#    class main
+#    user root
+#    oneshot
     
 # 2011-12-08/systemsw/kyo/ bugreport is triggered by holding down volume down, volume up and power
 service bugreport /system/bin/bugmailer.sh -v
