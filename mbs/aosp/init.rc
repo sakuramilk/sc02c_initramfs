@@ -33,6 +33,9 @@ loglevel 3
 # but someday that may change.
     symlink /system/vendor /vendor
 
+# libemoji_docomo
+    setprop ro.config.libemoji "libemoji_docomo.so"
+
 # Create cgroup mount point for cpu accounting
     mkdir /acct
     mount cgroup none /acct cpuacct
