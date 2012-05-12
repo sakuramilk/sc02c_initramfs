@@ -42,6 +42,9 @@ loglevel 3
 #add booting sound property
 #   setprop audioflinger.bootsnd 1
 
+# libemoji_docomo
+    setprop ro.config.libemoji "libemoji_docomo.so"
+
 # Create cgroup mount point for cpu accounting
     mkdir /acct
     mount cgroup none /acct cpuacct
