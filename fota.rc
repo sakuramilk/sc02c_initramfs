@@ -68,7 +68,11 @@ on early-fs
 
 on fs
     mount tmpfs tmpfs /tmp
-    //mount rfs /dev/block/stl9 /system check=no
+    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait
+
+    exec check_filesystem /dev/block/mmcblk0p9 ext4_system
+    
+    #mount rfs /dev/block/stl9 /system check=no
     mount ext4 /dev/block/mmcblk0p9 /system wait
     
     #exec apply_system_policy /dev/block/mmcblk0p10 ext4
@@ -139,5 +143,6 @@ on property:devenc.pwdui.done=1
     chown system system /data
     chmod 0771 /data 
     chmod 0777 /data/fota
+	 mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard
     #mount vfat /dev/block/mmcblk0p1 /sdcard
     start redbend_ua

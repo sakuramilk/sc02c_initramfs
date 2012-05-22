@@ -118,17 +118,12 @@ loglevel 3
     # 5.0 %
     write /dev/cpuctl/bg_non_interactive/cpu.shares 52
 
-# ko files for sakuractive
-#   insmod /lib/modules/cpufreq_sakuractive.ko
 
 # ko files for vibrator
     insmod /lib/modules/vibrator.ko
 
 # ko files for bthid
     insmod /lib/modules/bthid.ko
-
-# ko files for FM Radio
-#   insmod /lib/modules/Si4709_driver.ko
 
 # TweakGS2 extention properties
 on property:persist.tgs2.logger=1
@@ -199,7 +194,7 @@ on post-fs
     # To keep the clipped data as it is after rebooting
     mkdir /data/clipboard
     chown system system /data/clipboard
-    chmod 0777 /data/clipboard
+    chmod 0775 /data/clipboard
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy
     #mkdir /efs
@@ -263,7 +258,6 @@ on post-fs
     chown radio system /sys/class/sec/uart_switch/UART_SEL/value
     chmod 0664 /sys/class/sec/uart_switch/UART_SEL/value
 
-
 # create data/gps for GPS demon
     chown root system /dev/s3c2410_serial1
     chmod 0660 /dev/s3c2410_serial1
@@ -288,7 +282,7 @@ on post-fs
     # give system access to wpa_supplicant.conf for backup and restore
     mkdir /data/misc/wifi 0770 wifi wifi
     chmod 0770 /data/misc/wifi
-    mkdir /data/misc/radio 0774 radio radio
+    mkdir /data/misc/radio 0775 radio radio
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     mkdir /data/wifi 0770 wifi wifi
@@ -310,9 +304,9 @@ on post-fs
     chown system system /data/app    
 
     # create log system
-    mkdir /data/log 0777 system system
-
-    chmod 0777 /data/log
+    mkdir /data/log 0775 system log
+    chown system log /data/log
+    chmod 0775 /data/log 
     chmod 0777 /data/anr
     
     chmod 0662 /dev/log/radio
@@ -407,12 +401,12 @@ on post-fs
     chown system system /dev/s3c-tsi
 
 # ys46.yun:for MobileTV [ISDBT]
-    mkdir /data/atsc-mh 0777 system system
-    mkdir /data/one-seg 0777 system system
+    mkdir /data/atsc-mh 0775 system system
+    mkdir /data/one-seg 0775 system system
     chown system system /data/atsc-mh
     chown system system /data/one-seg
-    chmod 0777 /data/atsc-mh
-    chmod 0777 /data/one-seg
+    chmod 0775 /data/atsc-mh
+    chmod 0775 /data/one-seg
 
 
 on boot
@@ -745,14 +739,14 @@ service ril-daemon /system/bin/rild
 
 service mobex-daemon /system/bin/npsmobex
     user system
-    group system inet     
+    group system radio inet     
 
 service DR-deamon /system/bin/drexe
     user root
     group system radio inet net_raw     
 
 service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
-    socket zygote stream 666
+		socket zygote stream 660 root system
     onrestart write /sys/android_power/request_state wake
     onrestart write /sys/power/state on
     onrestart restart media
@@ -886,14 +880,15 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
 # JPN:ys46.yun for MobileTV [ISDBT]
 service nexplayer /system/bin/nexprocess
     user system
-    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+    group system radio audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
 
 service mobileTV /system/bin/broadcastProcessObserver
     user system
-    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+    group system radio audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
 
 on property:encryption.bootmode=remount
 
+    stop ril-daemon
     stop mobex-daemon
     stop DR-deamon
     stop tvout
@@ -978,9 +973,9 @@ on property:encryption.bootmode=remount
     chown system system /data/app    
 
     # create log system
-    mkdir /data/log 0777 system system
-
-    chmod 0777 /data/log
+    mkdir /data/log 0775 system log
+    chown system log /data/log
+    chmod 0775 /data/log 
     chmod 0777 /data/anr
     
     chmod 0662 /dev/log/radio
@@ -1013,6 +1008,9 @@ on property:encryption.bootmode=remount
     start immvibed    
     start media
     start tvout 
+    start DR-deamon
+    start mobex-daemon
+    start ril-daemon
 
 on property:sys.bootanim_completed=1
     stop samsungani
