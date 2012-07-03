@@ -109,23 +109,23 @@ loglevel 3
 
 # ko files for FM Radio
     insmod /lib/modules/Si4709_driver.ko
-
+    
 on fs
 # mount ext4 partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
     #mount ext4 /dev/block/mmcblk0p9 /system
-    mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
+    mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro 
     
     exec sfsck /dev/block/mmcblk0p7 ext4
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
     #exec sfsck /dev/block/mmcblk0p12 ext4
     #mount ext4 /dev/block/mmcblk0p12 /preload nosuid nodev noatime wait ro
-    
+
     mkdir /efs
     #mount rfs /dev/block/mmcblk0p1 /efs nosuid nodev check=no
-    exec sfsck /dev/block/mmcblk0p1 ext4
-    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait
+	exec sfsck /dev/block/mmcblk0p1 ext4
+    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
     chown radio system /efs
     chmod 0771 /efs
     mkdir /efs/bluetooth
@@ -135,17 +135,17 @@ on fs
     chmod 0775 /efs/bluetooth
     chmod 0775 /efs/wifi
 
-    # check encryption status, checking UMS & data should be excuted after this command 
-    exec check_encryption_status /dev/block/mmcblk0p10
-    
-    # verfiy filesystem (UMS)
-    exec sformat /dev/block/mmcblk0p11 vfat
-	  
-on post-fs
-    exec sfsck /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
+# Device Encryption by Security R&D Group. 
+    exec set_crypt_meta_info /dev/block/mmcblk0p1 efs
 
-    # once everything is setup, no need to modify /
+    # verfiy filesystem (UMS)
+    exec sformat /dev/block/mmcblk0p11 vfat encryptable
+    
+on post-fs
+	exec sfsck /dev/block/mmcblk0p10 ext4 encryptable
+    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
+    
+	# once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
 
     insmod /lib/modules/j4fs.ko
@@ -187,7 +187,7 @@ on post-fs-data
     # Create dump dir and collect dumps.
     # Do this before we mount cache so eventually we can use cache for
     # storing dumps on platforms which do not have a dedicated dump partition.
-
+   
     mkdir /data/dontpanic
     chown root log /data/dontpanic
     chmod 0750 /data/dontpanic
@@ -202,14 +202,14 @@ on post-fs-data
     chmod 0640 /data/dontpanic/apanic_threads
 
     write /proc/apanic_console 1
-
+    
     # GPS
     chown root system /dev/ttySAC1
     chmod 0660 /dev/ttySAC1
     chown root system /sys/class/sec/gps/GPS_PWR_EN/value
     chmod 0664 /sys/class/sec/gps/GPS_PWR_EN/value
     chown root system /sys/class/sec/gps/GPS_nRST/value
-    chmod 0664 /sys/class/sec/gps/GPS_nRST/value
+    chmod 0664 /sys/class/sec/gps/GPS_nRST/value    
     mkdir /data/gps 771 system system
     chown system system /data/gps
 
@@ -249,14 +249,14 @@ on post-fs-data
     # create directory for DRM plug-ins
     mkdir /data/drm 0774 drm drm
 
-	#Code changes for GB-> ICS upgrade for U1/T1 models ...Moving .db file .. starts
+    #Code changes for GB-> ICS upgrade for U1/T1 models ...Moving .db file .. starts
 
-	mkdir /data/system/databases 0771 system system
-	copy /data/data/com.sec.android.providers.drm/databases/drmdatabase.db /data/system/databases/drmdatabase.db
-	chown system system /data/system/databases/drmdatabase.db
-	chmod 0774 /data/system/databases/drmdatabase.db	
+    mkdir /data/system/databases 0771 system system
+    copy /data/data/com.sec.android.providers.drm/databases/drmdatabase.db /data/system/databases/drmdatabase.db
+    chown system system /data/system/databases/drmdatabase.db
+    chmod 0774 /data/system/databases/drmdatabase.db	
 
-	#Code changes for GB-> ICS upgrade for U1/T1 models ...Moving .db file .. ends	
+    #Code changes for GB-> ICS upgrade for U1/T1 models ...Moving .db file .. ends	
 	
 #SISO-PLAYREADY-CHANGES
 #DRM directory creation
@@ -288,7 +288,7 @@ on post-fs-data
     chown media system /efs/.files/.mp301
     chmod 0775 /efs/.files/.dx1
     chmod 0775 /efs/.files/.dm33
-    chmod 0775 /efs/.files/.mp301
+    chmod 0775 /efs/.files/.mp301    
 
     # If there is no fs-post-data action in the init.<device>.rc file, you
     # must uncomment this line, otherwise encrypted filesystems
@@ -296,21 +296,17 @@ on post-fs-data
     # Set indication (checked by vold) that we have finished this action
     #setprop vold.post_fs_data_done 1
 
-# Device Encryption by B2B Security Lab.
+# Device Encryption by B2B Security Lab. 
     setprop vold.post_fs_data_done 1
-
+    
     chown system system /sys/class/android_usb/android0/f_mass_storage/lun/file
     chmod 0660 /sys/class/android_usb/android0/f_mass_storage/lun/file
     chown system system /sys/class/android_usb/android0/f_rndis/ethaddr
     chmod 0660 /sys/class/android_usb/android0/f_rndis/ethaddr
-
+	
 # MTP Device permission.
 	chmod 0660 /dev/usb_mtp_gadget
 	chown system system /dev/usb_mtp_gadget
-
-# terminal mode
-    chmod 0660 /sys/class/android_usb/android0/terminal_version
-    chown system system /sys/class/android_usb/android0/terminal_version
 
 # NFC
     setprop ro.nfc.port "I2C"
@@ -328,7 +324,9 @@ on post-fs-data
 
     # create log system
     mkdir /data/log 0775 system log
+    mkdir /data/anr 0775 system log
     chown system log /data/log
+    chown system log /data/anr
 
     chmod 0775 /data/log
     chmod 0775 /data/anr
@@ -405,9 +403,9 @@ on boot
     chown system system /data/pxtmpdir
     chmod 0775 /data/pxtmpdir
 
-    # permission for HDMI audio path
+# permission for HDMI audio path
     chown media audio /sys/class/hdmi_audio/hdmi_audio/hdmi_audio_set_ext
-
+    
 # Permissions for gpio_keys.
     chown system radio /sys/class/sec/sec_key/wakeup_keys 
     write /sys/class/sec/sec_key/wakeup_keys  102,116
@@ -519,7 +517,22 @@ on boot
     chown system radio /sys/devices/virtual/sec/sec_touchscreen/tsp_threshold
     chown system radio /sys/devices/virtual/sec/sec_touchscreen/tsp_config_version
     chown system radio /sys/devices/virtual/sec/sec_touchscreen/tsp_touchtype
+	
+# JPN: For MobileTV [ISDBT] init_sdmmc_yamaha.rc
+    chown system system /dev/isdbt
+    chmod 0660 /dev/isdbt
+    chown system system /dev/s3c-tsi
+    chmod 0660 /dev/s3c-tsi
 
+# JPN: For MobileTV [ISDBT] init_sdmmc_yamaha.rc
+    mkdir /data/atsc-mh 0775 system system
+    mkdir /data/one-seg 0775 system system
+    chown system system /data/atsc-mh
+    chown system system /data/one-seg
+    chmod 0775 /data/atsc-mh
+    chmod 0775 /data/one-seg
+	
+	
 # Permissions for bluetooth
     setprop ro.bt.bdaddr_path "/efs/bluetooth/bt_addr"
     chown bluetooth bluetooth ro.bt.bdaddr_path
@@ -568,7 +581,7 @@ on boot
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
-#    setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+#   setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.wifi    4095,131072,196608,4096,16384,110208
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
@@ -581,7 +594,7 @@ on boot
     chown system system /dev/ttyGS1
     chown system system /dev/ttyGS2
     chown system system /dev/ttyGS3
-# +++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++   
 
 
 # RTC logging daemon
@@ -749,7 +762,7 @@ service surfaceflinger /system/bin/surfaceflinger
 
 service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
     class main
-    socket zygote stream 666
+    socket zygote stream 660 root system
     onrestart write /sys/android_power/request_state wake
     onrestart write /sys/power/state on
     onrestart restart media
@@ -758,7 +771,7 @@ service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-sys
 service drm /system/bin/drmserver
     class main
     user drm
-    group system inet sdcard_rw media_rw radio
+    group system inet drmrpc sdcard_rw media_rw radio
 
 service media /system/bin/mediaserver
     class main
@@ -831,7 +844,7 @@ service racoon /system/bin/racoon
     class main
     socket racoon stream 600 system system
     # racoon will setuid to vpn after getting necessary resources.
-    group net_admin
+    group vpn net_admin inet
     disabled
     oneshot
 
@@ -898,7 +911,17 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
 #    class main
 #    user root
 #    oneshot
-    
+
+# JPN: For MobileTV [ISDBT] init_sdmmc_yamaha.rc
+service nexplayer /system/bin/nexprocess
+    class main
+    user system
+    group system radio audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+service mobileTV /system/bin/broadcastProcessObserver
+    class main
+    user system
+    group system radio audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+
 # 2011-12-08/systemsw/kyo/ bugreport is triggered by holding down volume down, volume up and power
 service bugreport /system/bin/bugmailer.sh -v
 	class main

@@ -56,11 +56,6 @@ on early-fs
     mkdir /sdcard 0000 system system
     chown system system /sdcard
     chmod 0000 /sdcard
-    
-    mkdir /sdcard1 0000 system system
-    chown system system /sdcard1
-    chmod 0000 /sdcard1
-    
     mkdir /system
     mkdir /data 0771 system system
     chown system system /data
@@ -78,19 +73,13 @@ on fs
     
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait
     chown system system /data
-    chmod 0771 /data
-    mkdir /data/fota
-    chown system system /data/fota 
+    chmod 0771 /data 
     chmod 0777 /data/fota
  
 	  #mount rfs /dev/block/stl11 /cache nosuid nodev check=no
 	  mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     chown system cache /cache
     chmod 0770 /cache
-    mkdir /cache/fota
-    chown system system /cache/fota 
-    chmod 0777 /cache/fota
-    
     
     #mount rfs /dev/block/stl3 /efs nosuid nodev check=no
 

@@ -37,8 +37,8 @@ on boot
 
     mount debugfs /sys/kernel/debug /sys/kernel/debug
 
-    setprop ro.build.product GT-I9100
-    setprop ro.product.device GT-I9100
+    setprop ro.build.product SC-02C
+    setprop ro.product.device SC-02C
     setprop ro.radio.noril yes
 
 # Permisions for sensors
@@ -117,6 +117,4 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
 service iprenew_p2p /system/bin/dhcpcd -n
     class main
     disabled
-    oneshot
-    
-	
+    oneshot	

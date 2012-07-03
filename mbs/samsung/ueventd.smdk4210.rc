@@ -29,3 +29,5 @@
 /dev/block/mmcblk0p8      0660   system     radio
 /dev/akm8975              0660   system     system
 /dev/accelerometer        0660   system     system
+#JPN CPRM
+/dev/block/mmcblk1        0660   root       system
