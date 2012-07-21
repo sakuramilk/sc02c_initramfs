@@ -10,6 +10,9 @@ else
   BOOTANIM_WAIT=""
 fi
 
+# fix LPG Camera/movie
+chmod 640 $1/lib/hw/hwcomposer.exynos4.so
+
 # copy rc files
 cp /mbs/samsung/default.prop /
 cp /mbs/samsung/init.smdk4210.rc /
