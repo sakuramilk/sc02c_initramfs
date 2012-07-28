@@ -14,7 +14,12 @@ if [ -f $ROM_SYS_PATH/framework/twframework.jar ]; then
         sh /mbs/init.samsung.sh $ROM_SYS_PATH $ROM_DATA_PATH
     fi
 else
-    sh /mbs/init.aosp.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    SDK_VER=`grep ro\.build\.version\.sdk $ROM_SYS_PATH/build.prop | cut -d'=' -f2`
+    if [ "$SDK_VER" = '16' ]; then
+        sh /mbs/init.aosp-jb.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    else
+        sh /mbs/init.aosp-ics.sh $ROM_SYS_PATH $ROM_DATA_PATH
+    fi
 fi
 
 # Set TweakGS2 properties
