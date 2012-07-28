@@ -1,0 +1,405 @@
+# Copyright 2012 sakuramilk
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+#!/sbin/sh
+
+# cleaning
+if [ -f /system/app/SGS3RootingApp.apk ]; then
+  rm /system/app/SGS3RootingApp.apk
+fi
+if [ -f /system/bin/setuid_wrapper ]; then
+  rm /system/bin/setuid_wrapper
+fi
+if [ -f /system/bin/busybox_file ]; then
+  rm /system/etc/busybox_file
+fi
+if [ -f /system/etc/su_file ]; then
+  rm /system/etc/su_file
+fi
+if [ -f /system/etc/rooting.sh ]; then
+  rm /system/etc/rooting.sh
+fi
+
+# setup
+cp /vendor/rooting_kit/toolbox /system/bin/toolbox
+chown root.shell /system/bin/toolbox
+chmod 755 /system/bin/toolbox
+
+cp /vendor/rooting_kit/busybox_mount /system/bin/busybox_mount
+chown root.shell /system/bin/busybox_mount
+chmod 755 /system/bin/busybox_mount
+
+# busybox
+cp /vendor/rooting_kit/busybox /system/xbin/busybox
+chown root.shell /system/xbin/busybox
+chmod 755 /system/xbin/busybox
+ln -sf busybox /system/xbin/[
+ln -sf busybox /system/xbin/[[
+ln -sf busybox /system/xbin/acpid
+ln -sf busybox /system/xbin/add-shell
+ln -sf busybox /system/xbin/addgroup
+ln -sf busybox /system/xbin/adduser
+ln -sf busybox /system/xbin/adjtimex
+ln -sf busybox /system/xbin/arp
+ln -sf busybox /system/xbin/arping
+ln -sf busybox /system/xbin/ash
+ln -sf busybox /system/xbin/awk
+ln -sf busybox /system/xbin/base64
+ln -sf busybox /system/xbin/basename
+ln -sf busybox /system/xbin/beep
+ln -sf busybox /system/xbin/blkid
+ln -sf busybox /system/xbin/blockdev
+ln -sf busybox /system/xbin/bootchartd
+ln -sf busybox /system/xbin/brctl
+ln -sf busybox /system/xbin/bunzip2
+ln -sf busybox /system/xbin/bzcat
+ln -sf busybox /system/xbin/bzip2
+ln -sf busybox /system/xbin/cal
+ln -sf busybox /system/xbin/cat
+ln -sf busybox /system/xbin/catv
+ln -sf busybox /system/xbin/chat
+ln -sf busybox /system/xbin/chattr
+ln -sf busybox /system/xbin/chgrp
+ln -sf busybox /system/xbin/chmod
+ln -sf busybox /system/xbin/chown
+ln -sf busybox /system/xbin/chpasswd
+ln -sf busybox /system/xbin/chpst
+ln -sf busybox /system/xbin/chroot
+ln -sf busybox /system/xbin/chrt
+ln -sf busybox /system/xbin/chvt
+ln -sf busybox /system/xbin/cksum
+ln -sf busybox /system/xbin/clear
+ln -sf busybox /system/xbin/cmp
+ln -sf busybox /system/xbin/comm
+ln -sf busybox /system/xbin/cp
+ln -sf busybox /system/xbin/cpio
+ln -sf busybox /system/xbin/crond
+ln -sf busybox /system/xbin/crontab
+ln -sf busybox /system/xbin/cryptpw
+ln -sf busybox /system/xbin/cttyhack
+ln -sf busybox /system/xbin/cut
+ln -sf busybox /system/xbin/date
+ln -sf busybox /system/xbin/dc
+ln -sf busybox /system/xbin/dd
+ln -sf busybox /system/xbin/deallocvt
+ln -sf busybox /system/xbin/delgroup
+ln -sf busybox /system/xbin/deluser
+ln -sf busybox /system/xbin/depmod
+ln -sf busybox /system/xbin/devmem
+ln -sf busybox /system/xbin/df
+ln -sf busybox /system/xbin/dhcprelay
+ln -sf busybox /system/xbin/diff
+ln -sf busybox /system/xbin/dirname
+ln -sf busybox /system/xbin/dmesg
+ln -sf busybox /system/xbin/dnsd
+ln -sf busybox /system/xbin/dnsdomainname
+ln -sf busybox /system/xbin/dos2unix
+ln -sf busybox /system/xbin/du
+ln -sf busybox /system/xbin/dumpkmap
+ln -sf busybox /system/xbin/dumpleases
+ln -sf busybox /system/xbin/echo
+ln -sf busybox /system/xbin/ed
+ln -sf busybox /system/xbin/egrep
+ln -sf busybox /system/xbin/eject
+ln -sf busybox /system/xbin/env
+ln -sf busybox /system/xbin/envdir
+ln -sf busybox /system/xbin/envuidgid
+ln -sf busybox /system/xbin/ether-wake
+ln -sf busybox /system/xbin/expand
+ln -sf busybox /system/xbin/expr
+ln -sf busybox /system/xbin/fakeidentd
+ln -sf busybox /system/xbin/false
+ln -sf busybox /system/xbin/fbset
+ln -sf busybox /system/xbin/fbsplash
+ln -sf busybox /system/xbin/fdflush
+ln -sf busybox /system/xbin/fdformat
+ln -sf busybox /system/xbin/fdisk
+ln -sf busybox /system/xbin/fgconsole
+ln -sf busybox /system/xbin/fgrep
+ln -sf busybox /system/xbin/find
+ln -sf busybox /system/xbin/findfs
+ln -sf busybox /system/xbin/flock
+ln -sf busybox /system/xbin/fold
+ln -sf busybox /system/xbin/free
+ln -sf busybox /system/xbin/freeramdisk
+ln -sf busybox /system/xbin/fsck
+ln -sf busybox /system/xbin/fsck.minix
+ln -sf busybox /system/xbin/fsync
+ln -sf busybox /system/xbin/ftpd
+ln -sf busybox /system/xbin/ftpget
+ln -sf busybox /system/xbin/ftpput
+ln -sf busybox /system/xbin/fuser
+ln -sf busybox /system/xbin/getopt
+ln -sf busybox /system/xbin/getty
+ln -sf busybox /system/xbin/grep
+ln -sf busybox /system/xbin/groups
+ln -sf busybox /system/xbin/gunzip
+ln -sf busybox /system/xbin/gzip
+ln -sf busybox /system/xbin/halt
+ln -sf busybox /system/xbin/hd
+ln -sf busybox /system/xbin/hdparm
+ln -sf busybox /system/xbin/head
+ln -sf busybox /system/xbin/hexdump
+ln -sf busybox /system/xbin/hostid
+ln -sf busybox /system/xbin/hostname
+ln -sf busybox /system/xbin/httpd
+ln -sf busybox /system/xbin/hush
+ln -sf busybox /system/xbin/hwclock
+ln -sf busybox /system/xbin/id
+ln -sf busybox /system/xbin/ifconfig
+ln -sf busybox /system/xbin/ifdown
+ln -sf busybox /system/xbin/ifenslave
+ln -sf busybox /system/xbin/ifplugd
+ln -sf busybox /system/xbin/ifup
+ln -sf busybox /system/xbin/inetd
+ln -sf busybox /system/xbin/init
+ln -sf busybox /system/xbin/insmod
+ln -sf busybox /system/xbin/install
+ln -sf busybox /system/xbin/ionice
+ln -sf busybox /system/xbin/iostat
+ln -sf busybox /system/xbin/ip
+ln -sf busybox /system/xbin/ipaddr
+ln -sf busybox /system/xbin/ipcalc
+ln -sf busybox /system/xbin/ipcrm
+ln -sf busybox /system/xbin/ipcs
+ln -sf busybox /system/xbin/iplink
+ln -sf busybox /system/xbin/iproute
+ln -sf busybox /system/xbin/iprule
+ln -sf busybox /system/xbin/iptunnel
+ln -sf busybox /system/xbin/kbd_mode
+ln -sf busybox /system/xbin/kill
+ln -sf busybox /system/xbin/killall
+ln -sf busybox /system/xbin/killall5
+ln -sf busybox /system/xbin/klogd
+ln -sf busybox /system/xbin/last
+ln -sf busybox /system/xbin/less
+ln -sf busybox /system/xbin/linux32
+ln -sf busybox /system/xbin/linux64
+ln -sf busybox /system/xbin/linuxrc
+ln -sf busybox /system/xbin/ln
+ln -sf busybox /system/xbin/loadfont
+ln -sf busybox /system/xbin/loadkmap
+ln -sf busybox /system/xbin/logger
+ln -sf busybox /system/xbin/login
+ln -sf busybox /system/xbin/logname
+ln -sf busybox /system/xbin/logread
+ln -sf busybox /system/xbin/losetup
+ln -sf busybox /system/xbin/lpd
+ln -sf busybox /system/xbin/lpq
+ln -sf busybox /system/xbin/lpr
+ln -sf busybox /system/xbin/ls
+ln -sf busybox /system/xbin/lsattr
+ln -sf busybox /system/xbin/lsmod
+ln -sf busybox /system/xbin/lspci
+ln -sf busybox /system/xbin/lsusb
+ln -sf busybox /system/xbin/lzcat
+ln -sf busybox /system/xbin/lzma
+ln -sf busybox /system/xbin/lzop
+ln -sf busybox /system/xbin/lzopcat
+ln -sf busybox /system/xbin/makedevs
+ln -sf busybox /system/xbin/makemime
+ln -sf busybox /system/xbin/man
+ln -sf busybox /system/xbin/md5sum
+ln -sf busybox /system/xbin/mdev
+ln -sf busybox /system/xbin/mesg
+ln -sf busybox /system/xbin/microcom
+ln -sf busybox /system/xbin/mkdir
+ln -sf busybox /system/xbin/mkdosfs
+ln -sf busybox /system/xbin/mke2fs
+ln -sf busybox /system/xbin/mkfifo
+ln -sf busybox /system/xbin/mkfs.ext2
+ln -sf busybox /system/xbin/mkfs.minix
+ln -sf busybox /system/xbin/mkfs.vfat
+ln -sf busybox /system/xbin/mknod
+ln -sf busybox /system/xbin/mkpasswd
+ln -sf busybox /system/xbin/mkswap
+ln -sf busybox /system/xbin/mktemp
+ln -sf busybox /system/xbin/modinfo
+ln -sf busybox /system/xbin/modprobe
+ln -sf busybox /system/xbin/more
+ln -sf busybox /system/xbin/mount
+ln -sf busybox /system/xbin/mountpoint
+ln -sf busybox /system/xbin/mpstat
+ln -sf busybox /system/xbin/mt
+ln -sf busybox /system/xbin/mv
+ln -sf busybox /system/xbin/nameif
+ln -sf busybox /system/xbin/nbd-client
+ln -sf busybox /system/xbin/nc
+ln -sf busybox /system/xbin/netstat
+ln -sf busybox /system/xbin/nice
+ln -sf busybox /system/xbin/nmeter
+ln -sf busybox /system/xbin/nohup
+ln -sf busybox /system/xbin/nslookup
+ln -sf busybox /system/xbin/ntpd
+ln -sf busybox /system/xbin/od
+ln -sf busybox /system/xbin/openvt
+ln -sf busybox /system/xbin/passwd
+ln -sf busybox /system/xbin/patch
+ln -sf busybox /system/xbin/pgrep
+ln -sf busybox /system/xbin/pidof
+ln -sf busybox /system/xbin/ping
+ln -sf busybox /system/xbin/ping6
+ln -sf busybox /system/xbin/pipe_progress
+ln -sf busybox /system/xbin/pivot_root
+ln -sf busybox /system/xbin/pkill
+ln -sf busybox /system/xbin/pmap
+ln -sf busybox /system/xbin/popmaildir
+ln -sf busybox /system/xbin/poweroff
+ln -sf busybox /system/xbin/powertop
+ln -sf busybox /system/xbin/printenv
+ln -sf busybox /system/xbin/printf
+ln -sf busybox /system/xbin/ps
+ln -sf busybox /system/xbin/pscan
+ln -sf busybox /system/xbin/pstree
+ln -sf busybox /system/xbin/pwd
+ln -sf busybox /system/xbin/pwdx
+ln -sf busybox /system/xbin/raidautorun
+ln -sf busybox /system/xbin/rdate
+ln -sf busybox /system/xbin/rdev
+ln -sf busybox /system/xbin/readahead
+ln -sf busybox /system/xbin/readlink
+ln -sf busybox /system/xbin/readprofile
+ln -sf busybox /system/xbin/realpath
+ln -sf busybox /system/xbin/reboot
+ln -sf busybox /system/xbin/reformime
+ln -sf busybox /system/xbin/remove-shell
+ln -sf busybox /system/xbin/renice
+ln -sf busybox /system/xbin/reset
+ln -sf busybox /system/xbin/resize
+ln -sf busybox /system/xbin/rev
+ln -sf busybox /system/xbin/rm
+ln -sf busybox /system/xbin/rmdir
+ln -sf busybox /system/xbin/rmmod
+ln -sf busybox /system/xbin/route
+ln -sf busybox /system/xbin/rpm
+ln -sf busybox /system/xbin/rpm2cpio
+ln -sf busybox /system/xbin/rtcwake
+ln -sf busybox /system/xbin/run-parts
+ln -sf busybox /system/xbin/runlevel
+ln -sf busybox /system/xbin/runsv
+ln -sf busybox /system/xbin/runsvdir
+ln -sf busybox /system/xbin/rx
+ln -sf busybox /system/xbin/script
+ln -sf busybox /system/xbin/scriptreplay
+ln -sf busybox /system/xbin/sed
+ln -sf busybox /system/xbin/sendmail
+ln -sf busybox /system/xbin/seq
+ln -sf busybox /system/xbin/setarch
+ln -sf busybox /system/xbin/setconsole
+ln -sf busybox /system/xbin/setfont
+ln -sf busybox /system/xbin/setkeycodes
+ln -sf busybox /system/xbin/setlogcons
+ln -sf busybox /system/xbin/setserial
+ln -sf busybox /system/xbin/setsid
+ln -sf busybox /system/xbin/setuidgid
+ln -sf busybox /system/xbin/sh
+ln -sf busybox /system/xbin/sha1sum
+ln -sf busybox /system/xbin/sha256sum
+ln -sf busybox /system/xbin/sha512sum
+ln -sf busybox /system/xbin/showkey
+ln -sf busybox /system/xbin/slattach
+ln -sf busybox /system/xbin/sleep
+ln -sf busybox /system/xbin/smemcap
+ln -sf busybox /system/xbin/softlimit
+ln -sf busybox /system/xbin/sort
+ln -sf busybox /system/xbin/split
+ln -sf busybox /system/xbin/start-stop-daemon
+ln -sf busybox /system/xbin/stat
+ln -sf busybox /system/xbin/strings
+ln -sf busybox /system/xbin/stty
+ln -sf busybox /system/xbin/su
+ln -sf busybox /system/xbin/sulogin
+ln -sf busybox /system/xbin/sum
+ln -sf busybox /system/xbin/sv
+ln -sf busybox /system/xbin/svlogd
+ln -sf busybox /system/xbin/swapoff
+ln -sf busybox /system/xbin/swapon
+ln -sf busybox /system/xbin/switch_root
+ln -sf busybox /system/xbin/sync
+ln -sf busybox /system/xbin/sysctl
+ln -sf busybox /system/xbin/syslogd
+ln -sf busybox /system/xbin/tac
+ln -sf busybox /system/xbin/tail
+ln -sf busybox /system/xbin/tar
+ln -sf busybox /system/xbin/tcpsvd
+ln -sf busybox /system/xbin/tee
+ln -sf busybox /system/xbin/telnet
+ln -sf busybox /system/xbin/telnetd
+ln -sf busybox /system/xbin/test
+ln -sf busybox /system/xbin/tftp
+ln -sf busybox /system/xbin/tftpd
+ln -sf busybox /system/xbin/time
+ln -sf busybox /system/xbin/timeout
+ln -sf busybox /system/xbin/top
+ln -sf busybox /system/xbin/touch
+ln -sf busybox /system/xbin/tr
+ln -sf busybox /system/xbin/traceroute
+ln -sf busybox /system/xbin/traceroute6
+ln -sf busybox /system/xbin/true
+ln -sf busybox /system/xbin/tty
+ln -sf busybox /system/xbin/ttysize
+ln -sf busybox /system/xbin/tunctl
+ln -sf busybox /system/xbin/ubiattach
+ln -sf busybox /system/xbin/ubidetach
+ln -sf busybox /system/xbin/ubimkvol
+ln -sf busybox /system/xbin/ubirmvol
+ln -sf busybox /system/xbin/ubirsvol
+ln -sf busybox /system/xbin/ubiupdatevol
+ln -sf busybox /system/xbin/udhcpc
+ln -sf busybox /system/xbin/udhcpd
+ln -sf busybox /system/xbin/udpsvd
+ln -sf busybox /system/xbin/umount
+ln -sf busybox /system/xbin/uname
+ln -sf busybox /system/xbin/unexpand
+ln -sf busybox /system/xbin/uniq
+ln -sf busybox /system/xbin/unix2dos
+ln -sf busybox /system/xbin/unlzma
+ln -sf busybox /system/xbin/unlzop
+ln -sf busybox /system/xbin/unxz
+ln -sf busybox /system/xbin/unzip
+ln -sf busybox /system/xbin/uptime
+ln -sf busybox /system/xbin/users
+ln -sf busybox /system/xbin/usleep
+ln -sf busybox /system/xbin/uudecode
+ln -sf busybox /system/xbin/uuencode
+ln -sf busybox /system/xbin/vconfig
+ln -sf busybox /system/xbin/vi
+ln -sf busybox /system/xbin/vlock
+ln -sf busybox /system/xbin/volname
+ln -sf busybox /system/xbin/wall
+ln -sf busybox /system/xbin/watch
+ln -sf busybox /system/xbin/watchdog
+ln -sf busybox /system/xbin/wc
+ln -sf busybox /system/xbin/wget
+ln -sf busybox /system/xbin/which
+ln -sf busybox /system/xbin/who
+ln -sf busybox /system/xbin/whoami
+ln -sf busybox /system/xbin/whois
+ln -sf busybox /system/xbin/xargs
+ln -sf busybox /system/xbin/xz
+ln -sf busybox /system/xbin/xzcat
+ln -sf busybox /system/xbin/yes
+ln -sf busybox /system/xbin/zcat
+ln -sf busybox /system/xbin/zcip
+
+# su
+cp /vendor/rooting_kit/su /system/bin/su
+chown root.root /system/bin/su
+chmod 6755 /system/bin/su
+ln -sf /system/bin/su /system/xbin/su
+
+# SuperUser
+#cp /vendor/rooting_kit/SuperUser.apk /system/bin/app
+#chown root.root /system/app/SuperUser.apk
+#chmod 644 /system/app/SuperUser.apk
