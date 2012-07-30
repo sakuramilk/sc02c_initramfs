@@ -325,7 +325,9 @@ on post-fs-data
 
     # create log system
     mkdir /data/log 0775 system log
+    mkdir /data/anr 0775 system log
     chown system log /data/log
+    chown system log /data/anr
 
     chmod 0775 /data/log
     chmod 0775 /data/anr
