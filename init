@@ -10,12 +10,27 @@ mount -t proc proc /proc
 RECOVERY_MODE=`grep -c bootmode=2 /proc/cmdline`
 umount /proc
 
+#foce single boot mode
+BOOT_MODE=0
+
+if [ "$BOOT_MODE" = '0' ]; then
+  #single boot mode
+  mkdir /system
+  mkdir /data
+else
+  #mbs mode
+  mkdir /xdata
+fi
+
 if [ "$RECOVERY_MODE" = '1' ]; then
   # recovery mode
   sh /mbs/init.recovery.sh
 else
-  # normal mode
-  sh /mbs/init.normal.sh
+	if [ "$BOOT_MODE" = '0' ]; then
+	  sh /mbs/init.normal.sh
+	else
+	  sh /mbs/init.normal.sh
+	fi
 fi
 
 # cleanup
