@@ -17,6 +17,6 @@ cp /mbs/aosp-jb/lpm.rc /
 
 # copy bin files
 cp /mbs/aosp-jb/adbd /sbin/
-
+cp /mbs/aosp-jb/bootanimation /sbin/
 # create init.rc
 cp /mbs/aosp-jb/init.rc /

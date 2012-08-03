@@ -457,16 +457,10 @@ service media /system/bin/mediaserver
     group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc
     ioprio rt 4
 
-#service bootanim /sbin/bootanimation.sh
-#    class main
-#    user root
-#    group root
-#    disabled
-#    oneshot
-service bootanim /system/bin/bootanimation
+service bootanim /sbin/bootanimation.sh
     class main
-    user graphics
-    group graphics
+    user root
+    group root media
     disabled
     oneshot
 
