@@ -50,8 +50,8 @@ loglevel 3
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
 
-    mkdir /system
-    mkdir /data 0771 system system
+#    mkdir /system
+#    mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 	mkdir /preload 0771 system system
@@ -114,8 +114,9 @@ on fs
 # mount ext4 partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
     #mount ext4 /dev/block/mmcblk0p9 /system
+#@ROM_SYS_PART_STA
     mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro 
-    
+#@ROM_SYS_PART_END
     exec sfsck /dev/block/mmcblk0p7 ext4
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
@@ -142,9 +143,10 @@ on fs
     exec sformat /dev/block/mmcblk0p11 vfat encryptable
     
 on post-fs
+#@ROM_DATA_PART_STA
 	exec sfsck /dev/block/mmcblk0p10 ext4 encryptable
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait noauto_da_alloc
-    
+#@ROM_DATA_PART_END
 	# once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
 

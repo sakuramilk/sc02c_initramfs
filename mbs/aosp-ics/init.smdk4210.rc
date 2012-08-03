@@ -31,7 +31,7 @@ on early-init
 
 on fs
 # mount ext4 partitions
-    mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
+   #mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro
 
 # override kernel modules
     mount tmpfs tmpfs /system/lib/modules
